@@ -1,0 +1,74 @@
+{
+  "data": {
+    "searchByArea": [
+      {
+        "charger_id": "2",
+        "charging_speed": "fast",
+        "position": {
+          "lat": 60.168415993,
+          "lon": 24.9333962664
+        },
+        "reservations": [
+          {
+            "reservation_id": "rid-64720036",
+            "user_id": "andrea.buda@aalto.fi",
+            "timeslot": {
+              "gte": "2015-10-31 12:00:00",
+              "lte": "2015-10-31 13:00:00"
+            }
+          },
+          {
+            "reservation_id": "rid-34720056",
+            "user_id": "andrea_buda@hotmail.com",
+            "timeslot": {
+              "gte": "2018-10-31 16:00:00",
+              "lte": "2018-10-31 18:00:00"
+            }
+          }
+        ]
+      },
+      {
+        "charger_id": "1",
+        "charging_speed": "slow",
+        "position": {
+          "lat": 60.18825,
+          "lon": 24.83927
+        },
+        "reservations": [
+          {
+            "reservation_id": "rid-14720036",
+            "user_id": "andrea.buda@aalto.fi",
+            "timeslot": {
+              "gte": "2015-10-31 12:00:00",
+              "lte": "2015-10-31 13:00:00"
+            }
+          },
+          {
+            "reservation_id": "rid-34520036",
+            "user_id": "andrea_buda@hotmail.com",
+            "timeslot": {
+              "gte": "2017-10-31 16:00:00",
+              "lte": "2017-10-31 18:00:00"
+            }
+          },
+          {
+            "reservation_id": "rid-64629990",
+            "user_id": "TEST@TEST.it",
+            "timeslot": {
+              "gte": "2015-10-31 16:00:00",
+              "lte": "2015-10-31 18:00:00"
+            }
+          },
+          {
+            "reservation_id": "rid-71164674",
+            "user_id": "tuomas",
+            "timeslot": {
+              "gte": "2015-10-31 16:00:00",
+              "lte": "2015-10-31 18:00:00"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

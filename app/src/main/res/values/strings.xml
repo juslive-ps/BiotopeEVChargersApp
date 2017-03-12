@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">BiotopeEVChargersApp</string>
+    <string name="search">Find a charger near you</string>
+    <string name="title_activity_maps">Map</string>
+
+    <string name="map_charger_snippet_title">Charger %s </string>
+    <string name="map_charger_snippet_description">Charging speed: %s</string>
+
+</resources>
