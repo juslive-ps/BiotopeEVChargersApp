@@ -1,4 +1,4 @@
-package ws.tilda.anastasia.biotopeevchargersapp.main.ui;
+package ws.tilda.anastasia.biotopeevchargersapp.model.fetch;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -49,6 +49,30 @@ public class ChargerFetcher {
         }
 
         return json;
+    }
+
+    public Charger downloadCharger(String chargerId) {
+        List<Charger> chargers = new ArrayList<>();
+
+        try {
+            String jsonString = loadJSONFromAsset();
+            Log.i(TAG, "Received JSON: " + jsonString);
+            JSONObject jsonBody = new JSONObject(jsonString);
+            parseItems(chargers, jsonBody);
+
+            for(Charger charger : chargers){
+                if(charger.getChargerId().equals(chargerId)){
+                   return charger;
+                }
+            }
+
+        } catch (IOException ioe) {
+            Log.e(TAG, "Failed to fetch items", ioe);
+        } catch (JSONException je) {
+            Log.e(TAG, "Failed to parse JSON", je);
+        }
+
+        return null;
     }
 
     public List<Charger> downloadChargers() {

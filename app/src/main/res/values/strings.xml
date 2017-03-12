@@ -5,5 +5,10 @@
 
     <string name="map_charger_snippet_title">Charger %s </string>
     <string name="map_charger_snippet_description">Charging speed: %s</string>
+    <string name="charger_id_label">Charger ID</string>
+    <string name="charger_speed_label">Charger speed</string>
+    <string name="charger_location_label">Charger location</string>
+    <string name="reserve_price_label">Reserve price</string>
+    <string name="no_content">Charger not found</string>
 
 </resources>

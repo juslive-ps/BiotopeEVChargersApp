@@ -37,6 +37,7 @@ import ws.tilda.anastasia.biotopeevchargersapp.R;
 import ws.tilda.anastasia.biotopeevchargersapp.charger_details.ui.ChargerDetailActivity;
 import ws.tilda.anastasia.biotopeevchargersapp.model.Charger;
 import ws.tilda.anastasia.biotopeevchargersapp.model.Position;
+import ws.tilda.anastasia.biotopeevchargersapp.model.fetch.ChargerFetcher;
 
 public class ChargerMapFragment extends SupportMapFragment {
     public static final String TAG = "ChargerMapFragment";
@@ -219,7 +220,7 @@ public class ChargerMapFragment extends SupportMapFragment {
         int margin = getResources().getDimensionPixelSize(R.dimen.map_inset_margin);
 
         CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, margin);
-        mMap.animateCamera(update);
+        mMap.moveCamera(update);
     }
 
     private void addMarkersToMap(List<Charger> chargers, LatLngBounds.Builder boundsBuilder) {
