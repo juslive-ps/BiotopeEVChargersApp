@@ -57,6 +57,9 @@ public class ChargerMapFragment extends SupportMapFragment {
     };
 
     private static final String CHARGER_EXTRA = "CHARGER_EXTRA";
+    public static final String CHARGER_LAT_EXTRA = "CHARGER_LAT_EXTRA";
+    public static final String CHARGER_LON_EXTRA = "CHARGER_LON_EXTRA";
+
     private static final float RADIUS = 1200f;
 
     private Location mCurrentLocation;
@@ -111,9 +114,11 @@ public class ChargerMapFragment extends SupportMapFragment {
 
                             Intent intent = new Intent(getActivity(), ChargerDetailActivity.class);
                             intent.putExtra(CHARGER_EXTRA, charger.getChargerId());
+                            intent.putExtra(CHARGER_LAT_EXTRA, charger.getPosition().getLatitude());
+                            intent.putExtra(CHARGER_LON_EXTRA, charger.getPosition().getLongitude());
                             startActivity(intent);
 
-                            Log.d(TAG, "onInfoWindowClick: " + charger.getChargerId());
+///                            Log.d(TAG, "onInfoWindowClick: " + charger.getChargerId());
                         }
 
                     }
@@ -215,16 +220,25 @@ public class ChargerMapFragment extends SupportMapFragment {
             return;
         }
         mMap.clear();
+        if (ActivityCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
 
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
 
         LatLng myPoint = new LatLng(mCurrentLocation.getLatitude(),
                 mCurrentLocation.getLongitude());
-
-        Marker itemMarker = addMarkerToMap(myPoint);
-        itemMarker.setTitle("My Location");
-        itemMarker.setSnippet("I am here");
-        itemMarker.setTag(null);
 
         boundsBuilder.include(myPoint);
 
@@ -235,7 +249,7 @@ public class ChargerMapFragment extends SupportMapFragment {
         int margin = getResources().getDimensionPixelSize(R.dimen.map_inset_margin);
 
         CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, margin);
-        mMap.animateCamera(update);
+        mMap.moveCamera(update);
     }
 
     private void addMarkersToMap(List<Charger> chargers, LatLngBounds.Builder boundsBuilder) {
@@ -260,9 +274,9 @@ public class ChargerMapFragment extends SupportMapFragment {
         }
     }
 
-    private Marker addMarkerToMap(LatLng itemPoint) {
-        return addMarkerToMap(itemPoint, BitmapDescriptorFactory.HUE_RED);
-    }
+//    private Marker addMarkerToMap(LatLng itemPoint) {
+//        return addMarkerToMap(itemPoint, BitmapDescriptorFactory.HUE_RED);
+//    }
 
     private Marker addMarkerToMap(LatLng itemPoint, float colorMask) {
         MarkerOptions itemMarker = new MarkerOptions().position(itemPoint);

@@ -1,36 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="ws.tilda.anastasia.biotopeevchargersapp.charger_details.ui.ChargerDetailActivity">
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android">
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
-                  android:layout_margin="16dp"
                   android:orientation="vertical">
 
         <com.google.android.gms.maps.MapView
             android:id="@+id/mapView"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="200dp"
             android:layout_marginBottom="16dp"
             android:layout_marginTop="8dp"/>
 
 
         <TextView
-            style="?android:listSeparatorTextViewStyle"
+            style="?android:listViewStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:labelFor="@+id/charger_id"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:text="@string/charger_id_label"/>
 
         <TextView
@@ -38,13 +33,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="Charger 1"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
 
         <TextView
-            style="?android:listSeparatorTextViewStyle"
+            style="?android:listViewStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:labelFor="@+id/charger_location"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:text="@string/charger_location_label"/>
 
         <TextView
@@ -52,35 +51,64 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="Espoo, Finland"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
 
         <TextView
-            style="?android:listSeparatorTextViewStyle"
+            style="?android:listViewStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:labelFor="@+id/charger_speed"
-            android:text="@string/charger_speed_label"/>
+            android:text="@string/charger_speed_label"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
 
         <TextView
             android:id="@+id/charger_speed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="Fast"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
 
         <TextView
-            style="?android:listSeparatorTextViewStyle"
+            style="?android:listViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/charger_status"
+            android:text="@string/charger_status_label"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
+
+        <TextView
+            android:id="@+id/charger_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Available"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
+
+        <TextView
+
+            style="?android:listViewStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:labelFor="@+id/charger_price"
-            android:text="@string/reserve_price_label"/>
+            android:text="@string/reserve_price_label"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
 
         <TextView
             android:id="@+id/charger_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="0.0 eur/min"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
 
 
         <Button
@@ -93,7 +121,6 @@
 
     </LinearLayout>
 
-    </ScrollView>
+</ScrollView>
 
 
-</FrameLayout>
