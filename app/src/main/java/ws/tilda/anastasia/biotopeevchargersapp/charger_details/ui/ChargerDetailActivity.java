@@ -47,6 +47,7 @@ public class ChargerDetailActivity extends AppCompatActivity {
     private static final String CHARGER_EXTRA = "CHARGER_EXTRA";
     public static final String CHARGER_LAT_EXTRA = "CHARGER_LAT_EXTRA";
     public static final String CHARGER_LON_EXTRA = "CHARGER_LON_EXTRA";
+    private static final float RADIUS = 0f;
     private String chargerId;
     private GoogleMap mMap;
 
@@ -205,7 +206,7 @@ public class ChargerDetailActivity extends AppCompatActivity {
                     getString(R.string.query_chargerId_speed_position_available_reservations),
                     mChargerLatitude,
                     mChargerLongitude,
-                    1200f);
+                    RADIUS);
 
             ApiClient.ChargerService chargerService = ApiClient.getApi();
             mQuery.setQuery(queryText);

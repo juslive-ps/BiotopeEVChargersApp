@@ -294,7 +294,8 @@ public class ChargerMapFragment extends SupportMapFragment {
             float currentLatitude = (float) mCurrentLocation.getLatitude();
             float currentLongitude = (float) mCurrentLocation.getLongitude();
 
-            String queryText = String.format(Locale.US, getString(R.string.query_chargerId_speed_position),
+            String queryText = String.format(Locale.US,
+                    getString(R.string.query_chargerId_speed_position),
                     currentLatitude,
                     currentLongitude,
                     RADIUS);
