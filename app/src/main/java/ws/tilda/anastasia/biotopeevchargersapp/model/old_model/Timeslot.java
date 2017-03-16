@@ -1,17 +1,13 @@
+package ws.tilda.anastasia.biotopeevchargersapp.model.old_model;
 
-package ws.tilda.anastasia.biotopeevchargersapp.model;
-
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Timeslot {
-
     @SerializedName("gte")
-    @Expose
-    private String startTime;
+     String startTime;
+
     @SerializedName("lte")
-    @Expose
-    private String endTime;
+     String endTime;
 
     public String getStartTime() {
         return startTime;
@@ -28,5 +24,4 @@ public class Timeslot {
     public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
-
 }

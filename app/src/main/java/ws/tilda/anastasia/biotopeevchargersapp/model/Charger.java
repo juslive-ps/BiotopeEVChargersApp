@@ -1,59 +1,66 @@
+
 package ws.tilda.anastasia.biotopeevchargersapp.model;
 
+import java.util.List;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Charger {
+
     @SerializedName("charger_id")
-     String mChargerId;
-
+    @Expose
+    private String chargerId;
     @SerializedName("charging_speed")
-     String mChargingSpeed;
-
+    @Expose
+    private String chargingSpeed;
+    @SerializedName("available")
+    @Expose
+    private Boolean available;
     @SerializedName("position")
-     Position mPosition;
-
+    @Expose
+    private Position position;
     @SerializedName("reservations")
-     List<Reservation> mReservations;
-
-    public Charger() {
-        mReservations = new ArrayList<>();
-    }
-
+    @Expose
+    private List<Reservation> reservations = null;
 
     public String getChargerId() {
-        return mChargerId;
+        return chargerId;
     }
 
     public void setChargerId(String chargerId) {
-        mChargerId = chargerId;
+        this.chargerId = chargerId;
     }
 
     public String getChargingSpeed() {
-        return mChargingSpeed;
+        return chargingSpeed;
     }
 
     public void setChargingSpeed(String chargingSpeed) {
-        mChargingSpeed = chargingSpeed;
+        this.chargingSpeed = chargingSpeed;
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
     }
 
     public Position getPosition() {
-        return mPosition;
+        return position;
     }
 
     public void setPosition(Position position) {
-        mPosition = position;
+        this.position = position;
     }
 
     public List<Reservation> getReservations() {
-        return mReservations;
+        return reservations;
     }
 
     public void setReservations(List<Reservation> reservations) {
-        mReservations = reservations;
+        this.reservations = reservations;
     }
+
 }
-
-

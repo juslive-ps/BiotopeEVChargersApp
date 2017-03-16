@@ -13,10 +13,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import ws.tilda.anastasia.biotopeevchargersapp.model.Charger;
-import ws.tilda.anastasia.biotopeevchargersapp.model.Position;
-import ws.tilda.anastasia.biotopeevchargersapp.model.Reservation;
-import ws.tilda.anastasia.biotopeevchargersapp.model.Timeslot;
+import ws.tilda.anastasia.biotopeevchargersapp.model.old_model.Charger;
+import ws.tilda.anastasia.biotopeevchargersapp.model.old_model.Position;
+import ws.tilda.anastasia.biotopeevchargersapp.model.old_model.Reservation;
+import ws.tilda.anastasia.biotopeevchargersapp.model.old_model.Timeslot;
 
 public class ChargerFetcher {
     public static final String TAG = "ChargerFetcher";
@@ -60,9 +60,9 @@ public class ChargerFetcher {
             JSONObject jsonBody = new JSONObject(jsonString);
             parseItems(chargers, jsonBody);
 
-            for(Charger charger : chargers){
-                if(charger.getChargerId().equals(chargerId)){
-                   return charger;
+            for (Charger charger : chargers) {
+                if (charger.getChargerId().equals(chargerId)) {
+                    return charger;
                 }
             }
 

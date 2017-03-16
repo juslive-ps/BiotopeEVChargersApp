@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -31,13 +32,20 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import retrofit2.Call;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
 import ws.tilda.anastasia.biotopeevchargersapp.charger_details.ui.ChargerDetailActivity;
 import ws.tilda.anastasia.biotopeevchargersapp.model.Charger;
+import ws.tilda.anastasia.biotopeevchargersapp.model.GetChargersResponse;
 import ws.tilda.anastasia.biotopeevchargersapp.model.Position;
-import ws.tilda.anastasia.biotopeevchargersapp.model.fetch.ChargerFetcher;
+import ws.tilda.anastasia.biotopeevchargersapp.model.fetch.ApiClient;
+import ws.tilda.anastasia.biotopeevchargersapp.model.fetch.Query;
+
 
 public class ChargerMapFragment extends SupportMapFragment {
     public static final String TAG = "ChargerMapFragment";
@@ -49,10 +57,12 @@ public class ChargerMapFragment extends SupportMapFragment {
     };
 
     private static final String CHARGER_EXTRA = "CHARGER_EXTRA";
+    private static final float RADIUS = 1200f;
 
     private Location mCurrentLocation;
     private GoogleApiClient mClient;
     private GoogleMap mMap;
+
 
     public static ChargerMapFragment newInstance() {
         return new ChargerMapFragment();
@@ -94,14 +104,18 @@ public class ChargerMapFragment extends SupportMapFragment {
                 mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                     @Override
                     public void onInfoWindowClick(Marker marker) {
-                        Charger charger = (Charger) marker.getTag();
+                        if (marker.getTag() == null) {
+                            Toast.makeText(getActivity(), "This is my location ", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Charger charger = (Charger) marker.getTag();
 
-                        Intent intent = new Intent(getActivity(), ChargerDetailActivity.class);
-                        intent.putExtra(CHARGER_EXTRA, charger.getChargerId());
-                        startActivity(intent);
+                            Intent intent = new Intent(getActivity(), ChargerDetailActivity.class);
+                            intent.putExtra(CHARGER_EXTRA, charger.getChargerId());
+                            startActivity(intent);
 
+                            Log.d(TAG, "onInfoWindowClick: " + charger.getChargerId());
+                        }
 
-                        Log.d(TAG, "onInfoWindowClick: " + charger.getChargerId());
                     }
                 });
             }
@@ -208,8 +222,9 @@ public class ChargerMapFragment extends SupportMapFragment {
                 mCurrentLocation.getLongitude());
 
         Marker itemMarker = addMarkerToMap(myPoint);
-        itemMarker.setTitle("my title");
-        itemMarker.setSnippet("my snippet");
+        itemMarker.setTitle("My Location");
+        itemMarker.setSnippet("I am here");
+        itemMarker.setTag(null);
 
         boundsBuilder.include(myPoint);
 
@@ -220,7 +235,7 @@ public class ChargerMapFragment extends SupportMapFragment {
         int margin = getResources().getDimensionPixelSize(R.dimen.map_inset_margin);
 
         CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, margin);
-        mMap.moveCamera(update);
+        mMap.animateCamera(update);
     }
 
     private void addMarkersToMap(List<Charger> chargers, LatLngBounds.Builder boundsBuilder) {
@@ -256,12 +271,42 @@ public class ChargerMapFragment extends SupportMapFragment {
         return mMap.addMarker(itemMarker);
     }
 
-    private class SearchTask extends AsyncTask<Location, Void, List<Charger>> {
+    private class SearchTask extends AsyncTask<Object, Object, List<Charger>> {
+        private Query mQuery = new Query();
+        private List<Charger> chargers = new ArrayList<>();
 
         @Override
-        protected List<Charger> doInBackground(Location... params) {
-            ChargerFetcher fetch = new ChargerFetcher(getActivity());
-            return fetch.downloadChargers();
+        protected List<Charger> doInBackground(Object... params) {
+            float currentLatitude = (float) mCurrentLocation.getLatitude();
+            float currentLongitude = (float) mCurrentLocation.getLongitude();
+
+            String queryText = String.format(Locale.US, getString(R.string.query_chargerId_speed_position),
+                    currentLatitude,
+                    currentLongitude,
+                    RADIUS);
+
+            ApiClient.ChargerService chargerService = ApiClient.getApi();
+            mQuery.setQuery(queryText);
+            Call<GetChargersResponse> call = chargerService.getChargers(mQuery);
+
+            if (call == null) {
+                Log.e(TAG, "Call is null");
+            } else {
+                try {
+                    GetChargersResponse getChargersResponse = call.execute().body();
+                    if (getChargersResponse == null) {
+                        Log.e(TAG, "Response is null");
+                    } else {
+                        chargers = getChargersResponse.getData().getChargers();
+                    }
+                } catch (IOException e) {
+                    e.getMessage();
+                    Toast.makeText(getActivity(), "Exception received: " + e, Toast.LENGTH_SHORT)
+                                   .show();
+                }
+            }
+
+            return chargers;
         }
 
         @Override

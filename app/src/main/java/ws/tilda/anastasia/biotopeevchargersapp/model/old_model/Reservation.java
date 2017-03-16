@@ -1,35 +1,31 @@
+package ws.tilda.anastasia.biotopeevchargersapp.model.old_model;
 
-package ws.tilda.anastasia.biotopeevchargersapp.model;
-
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Reservation {
-
     @SerializedName("reservation_id")
-    @Expose
-    private String reservationId;
+     String mReservationId;
+
     @SerializedName("user_id")
-    @Expose
-    private String userId;
+     String mUserId;
+
     @SerializedName("timeslot")
-    @Expose
-    private Timeslot timeslot;
+     Timeslot timeslot;
 
     public String getReservationId() {
-        return reservationId;
+        return mReservationId;
     }
 
     public void setReservationId(String reservationId) {
-        this.reservationId = reservationId;
+        mReservationId = reservationId;
     }
 
     public String getUserId() {
-        return userId;
+        return mUserId;
     }
 
     public void setUserId(String userId) {
-        this.userId = userId;
+        mUserId = userId;
     }
 
     public Timeslot getTimeslot() {
@@ -39,5 +35,4 @@ public class Reservation {
     public void setTimeslot(Timeslot timeslot) {
         this.timeslot = timeslot;
     }
-
 }

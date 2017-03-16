@@ -4,20 +4,16 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,16 +22,13 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import ws.tilda.anastasia.biotopeevchargersapp.R;
-import ws.tilda.anastasia.biotopeevchargersapp.main.ui.ChargersMapActivity;
-import ws.tilda.anastasia.biotopeevchargersapp.model.Charger;
-import ws.tilda.anastasia.biotopeevchargersapp.model.Position;
+import ws.tilda.anastasia.biotopeevchargersapp.model.old_model.Charger;
+import ws.tilda.anastasia.biotopeevchargersapp.model.old_model.Position;
 import ws.tilda.anastasia.biotopeevchargersapp.model.fetch.ChargerFetcher;
 
-import static ws.tilda.anastasia.biotopeevchargersapp.R.id.map;
 import static ws.tilda.anastasia.biotopeevchargersapp.R.id.mapView;
 
 public class ChargerDetailActivity extends AppCompatActivity {

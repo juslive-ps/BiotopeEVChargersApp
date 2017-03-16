@@ -1,27 +1,32 @@
+
 package ws.tilda.anastasia.biotopeevchargersapp.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Position {
+
     @SerializedName("lat")
-     double mLatitude;
-
+    @Expose
+    private float lat;
     @SerializedName("lon")
-     double mLongitude;
+    @Expose
+    private float lon;
 
-    public double getLatitude() {
-        return mLatitude;
+    public float getLatitude() {
+        return lat;
     }
 
-    public void setLatitude(double latitude) {
-        mLatitude = latitude;
+    public void setLatitude(float lat) {
+        this.lat = lat;
     }
 
-    public double getLongitude() {
-        return mLongitude;
+    public float getLongitude() {
+        return lon;
     }
 
-    public void setLongitude(double longitude) {
-        mLongitude = longitude;
+    public void setLongitude(float lon) {
+        this.lon = lon;
     }
+
 }
