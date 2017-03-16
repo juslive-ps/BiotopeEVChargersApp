@@ -41,7 +41,6 @@ import ws.tilda.anastasia.biotopeevchargersapp.model.fetch.ApiClient;
 import ws.tilda.anastasia.biotopeevchargersapp.model.fetch.Query;
 
 import static ws.tilda.anastasia.biotopeevchargersapp.R.id.mapView;
-import static ws.tilda.anastasia.biotopeevchargersapp.R.string.status_available;
 
 public class ChargerDetailActivity extends AppCompatActivity {
     public static final String TAG = "ChargerDetailActivity";
@@ -128,6 +127,7 @@ public class ChargerDetailActivity extends AppCompatActivity {
     private void fillChargerInfo(Charger charger) {
         mChargerId.setText(charger.getChargerId());
         mChargerSpeed.setText(charger.getChargingSpeed());
+        mChargerReservePrice.setText("0.0 eur/min");
 
         boolean isAvailable = charger.getAvailable();
         if(!isAvailable) {
