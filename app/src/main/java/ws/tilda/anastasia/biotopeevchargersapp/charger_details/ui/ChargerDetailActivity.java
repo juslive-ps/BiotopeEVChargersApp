@@ -8,15 +8,16 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.florent37.singledateandtimepicker.dialog.DoubleDateAndTimePickerDialog;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,10 +29,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
 import ws.tilda.anastasia.biotopeevchargersapp.model.Charger;
@@ -60,9 +67,15 @@ public class ChargerDetailActivity extends AppCompatActivity {
     private TextView mChargerSpeed;
     private TextView mChargerStatus;
     private TextView mChargerReservePrice;
-    private Button mReserveButton;
 
     private Context mContext;
+
+    @Bind(R.id.doubleText)
+    TextView doubleText;
+
+    SimpleDateFormat simpleDateFormat;
+
+    DoubleDateAndTimePickerDialog.Builder doubleBuilder;
 
 
     @Override
@@ -70,6 +83,9 @@ public class ChargerDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_charger_detail);
+
+        ButterKnife.bind(this);
+        this.simpleDateFormat = new SimpleDateFormat("EEE d MMM HH:mm", Locale.getDefault());
 
         ActionBar actionBar = getSupportActionBar();
 
@@ -108,6 +124,47 @@ public class ChargerDetailActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (doubleBuilder != null)
+            doubleBuilder.close();
+    }
+
+    @OnClick(R.id.doubleLayout)
+    public void doubleClicked() {
+
+        final Calendar calendar = Calendar.getInstance();
+        int currentDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentYear = calendar.get(Calendar.YEAR);
+        calendar.set(Calendar.DAY_OF_MONTH, currentDayOfMonth);
+        calendar.set(Calendar.MONTH, currentMonth);
+        calendar.set(Calendar.YEAR, currentYear);
+
+        calendar.set(Calendar.DAY_OF_MONTH, 5);
+
+        doubleBuilder = new DoubleDateAndTimePickerDialog.Builder(this)
+                .backgroundColor(getResources().getColor(R.color.colorPrimary))
+                .mainColor(getResources().getColor(R.color.colorAccent))
+                .minutesStep(15)
+                .mustBeOnFuture()
+                .title("Make reservation")
+                .tab0Text("Start time")
+                .tab1Text("End time")
+                .listener(new DoubleDateAndTimePickerDialog.Listener() {
+                    @Override
+                    public void onDateSelected(List<Date> dates) {
+                        final StringBuilder stringBuilder = new StringBuilder();
+                        for (Date date : dates) {
+                            stringBuilder.append(simpleDateFormat.format(date)).append("\n");
+                        }
+                        doubleText.setText(stringBuilder.toString());
+                    }
+                });
+        doubleBuilder.display();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -130,19 +187,43 @@ public class ChargerDetailActivity extends AppCompatActivity {
         mChargerSpeed.setText(charger.getChargingSpeed());
         mChargerReservePrice.setText("0.0 eur/min");
 
-        boolean isAvailable = charger.getAvailable();
-        if(!isAvailable) {
-            mChargerStatus.setText(R.string.status_not_available);
-        } else {
-            mChargerStatus.setText(R.string.status_available);
-        }
-        double chargerLatitude = (double) charger.getPosition().getLatitude();
-        double chargerLongitude = (double) charger.getPosition().getLongitude();
-        String address = getAddress(chargerLatitude, chargerLongitude);
-        mChargerLocation.setText(address);
+        setChargerStatus(charger);
+        setChargerAddress(charger);
 
-        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        enableMyLocation();
 
+        MapsInitializer.initialize(mContext);
+
+        addMarkerToMapView(charger);
+
+        setZoom(charger);
+    }
+
+    private void setZoom(Charger charger) {
+        LatLng latLng = getChargerLatLng(charger);
+
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
+        mMap.moveCamera(cameraUpdate);
+    }
+
+    @NonNull
+    private void addMarkerToMapView(Charger charger) {
+        LatLng latLng = getChargerLatLng(charger);
+
+        MarkerOptions itemMarker = new MarkerOptions().position(latLng);
+        itemMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
+        mMap.addMarker(itemMarker);
+    }
+
+    @NonNull
+    private LatLng getChargerLatLng(Charger charger) {
+        Position position = charger.getPosition();
+        return new LatLng(position.getLatitude(), position.getLongitude());
+    }
+
+    private void enableMyLocation() {
+        //Necessary permissions check
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(mContext,
@@ -157,20 +238,24 @@ public class ChargerDetailActivity extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.setMyLocationEnabled(true);
+    }
 
-        MapsInitializer.initialize(mContext);
+    private void setChargerAddress(Charger charger) {
+        double chargerLatitude = (double) charger.getPosition().getLatitude();
+        double chargerLongitude = (double) charger.getPosition().getLongitude();
+        String address = getAddress(chargerLatitude, chargerLongitude);
+        mChargerLocation.setText(address);
+    }
 
-        Position position = charger.getPosition();
-        LatLng latLng = new LatLng(position.getLatitude(), position.getLongitude());
-
-        MarkerOptions itemMarker = new MarkerOptions().position(latLng);
-        itemMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-
-        mMap.addMarker(itemMarker);
-
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
-        mMap.moveCamera(cameraUpdate);
+    private void setChargerStatus(Charger charger) {
+        boolean isAvailable = charger.getAvailable();
+        if (!isAvailable) {
+            mChargerStatus.setText(R.string.status_not_available);
+        } else {
+            mChargerStatus.setText(R.string.status_available);
+        }
     }
 
     private String getAddress(double latitude, double longitude) {
@@ -181,7 +266,7 @@ public class ChargerDetailActivity extends AppCompatActivity {
             if (addresses != null && addresses.size() > 0) {
                 for (Address adr : addresses) {
                     if (adr.getLocality() != null && adr.getLocality().length() > 0) {
-                        return adr.getLocality()  + ", "
+                        return adr.getLocality() + ", "
                                 + adr.getCountryName();
                     }
                 }
@@ -202,39 +287,49 @@ public class ChargerDetailActivity extends AppCompatActivity {
         @Override
         protected Charger doInBackground(Object... params) {
 
-            String queryText = String.format(Locale.US,
-                    getString(R.string.query_chargerId_speed_position_available_reservations),
-                    mChargerLatitude,
-                    mChargerLongitude,
-                    RADIUS);
+            Call<GetChargersResponse> call = callingApi();
 
-            ApiClient.ChargerService chargerService = ApiClient.getApi();
-            mQuery.setQuery(queryText);
-            Call<GetChargersResponse> call = chargerService.getChargers(mQuery);
+            return getCharger(call);
+        }
 
-            if (call == null) {
-                Log.e(TAG, "Call is null");
-            } else {
-                try {
-                    GetChargersResponse getChargersResponse = call.execute().body();
-                    if (getChargersResponse == null) {
-                        Log.e(TAG, "Response is null");
-                    } else {
-                        chargers = getChargersResponse.getData().getChargers();
-                        for (Charger charger : chargers) {
-                            if (charger.getChargerId().equals(chargerId)) {
-                                mPickedCharger = charger;
-                            }
+        private Charger getCharger(Call<GetChargersResponse> call) {
+            try {
+                GetChargersResponse getChargersResponse = call.execute().body();
+                if (getChargersResponse == null) {
+                    Log.e(TAG, "Response is null");
+                } else {
+                    chargers = getChargersResponse.getData().getChargers();
+                    for (Charger charger : chargers) {
+                        if (charger.getChargerId().equals(chargerId)) {
+                            mPickedCharger = charger;
                         }
                     }
-                } catch (IOException e) {
-                    e.getMessage();
-                    Toast.makeText(ChargerDetailActivity.this, "Exception received: " + e, Toast.LENGTH_SHORT)
-                            .show();
                 }
+            } catch (IOException e) {
+                e.getMessage();
             }
 
             return mPickedCharger;
+        }
+
+        private Call<GetChargersResponse> callingApi() {
+            Query queryBody = getQueryBody(mQuery);
+            ApiClient.ChargerService chargerService = ApiClient.getApi();
+            return chargerService.getChargers(queryBody);
+        }
+
+        private Query getQueryBody(Query query) {
+            String queryText = getQueryString();
+            query.setQuery(queryText);
+            return query;
+        }
+
+        private String getQueryString() {
+            return String.format(Locale.US,
+                            getString(R.string.query_chargerId_speed_position_available_reservations),
+                            mChargerLatitude,
+                            mChargerLongitude,
+                            RADIUS);
         }
 
         @Override
