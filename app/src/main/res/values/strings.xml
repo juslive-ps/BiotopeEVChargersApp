@@ -13,7 +13,9 @@
     <string name="charger_status_label">Status</string>
 
     <string name="query_chargerId_speed_position">{searchByArea(lat: %1$f, lon: %2$f, radius: %3$f) {charger_id, charging_speed, position {lat, lon}}}</string>
+    <string name="query_chargerId_speed_position_dummy">{searchByArea(lat: 41.0, lon: -71.0, radius: 11200.0) {charger_id, charging_speed, position {lat, lon}}}</string>
     <string name="query_chargerId_speed_position_available_reservations">{searchByArea(lat: %1$f, lon: %2$f, radius: %3$f) {charger_id, charging_speed, available, position {lat, lon} reservations{timeslot{gte,lte}}}}</string>
+    <string name="query_chargerId_speed_position_available_reservations_dummy">{searchByArea(lat: 41.0, lon: -71.0, radius: 11200.0) {charger_id, charging_speed, available, position {lat, lon} reservations{timeslot{gte,lte}}}}</string>
     <string name="status_available">available</string>
     <string name="status_not_available">not available</string>
     <string name="reservation_fragment_title">Reservation times today:</string>

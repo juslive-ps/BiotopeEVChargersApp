@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:screenOrientation="portrait">
-        <activity android:name=".main.ui.ChargersMapActivity"
+        <activity android:name=".view.chargers_map.ui.ChargersMapActivity"
                   android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -36,7 +36,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key"/>
 
-        <activity android:name=".charger_details.ui.ChargerDetailActivity"
+        <activity android:name=".view.charger_details.ui.ChargerDetailActivity"
                   android:screenOrientation="portrait">
         </activity>
     </application>

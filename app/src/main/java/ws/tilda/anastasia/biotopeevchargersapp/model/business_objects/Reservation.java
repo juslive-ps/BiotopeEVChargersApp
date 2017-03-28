@@ -1,5 +1,5 @@
 
-package ws.tilda.anastasia.biotopeevchargersapp.model;
+package ws.tilda.anastasia.biotopeevchargersapp.model.business_objects;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

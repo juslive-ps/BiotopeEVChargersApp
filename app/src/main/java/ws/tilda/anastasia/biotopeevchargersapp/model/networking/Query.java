@@ -1,4 +1,4 @@
-package ws.tilda.anastasia.biotopeevchargersapp.model.fetch;
+package ws.tilda.anastasia.biotopeevchargersapp.model.networking;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

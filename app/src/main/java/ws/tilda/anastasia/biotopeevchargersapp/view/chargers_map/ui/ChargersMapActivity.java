@@ -1,4 +1,4 @@
-package ws.tilda.anastasia.biotopeevchargersapp.main.ui;
+package ws.tilda.anastasia.biotopeevchargersapp.view.chargers_map.ui;
 
 import android.app.Dialog;
 import android.content.DialogInterface;

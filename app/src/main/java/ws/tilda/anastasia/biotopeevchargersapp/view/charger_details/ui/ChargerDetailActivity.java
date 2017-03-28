@@ -1,4 +1,4 @@
-package ws.tilda.anastasia.biotopeevchargersapp.charger_details.ui;
+package ws.tilda.anastasia.biotopeevchargersapp.view.charger_details.ui;
 
 import android.Manifest;
 import android.content.Context;
@@ -41,11 +41,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Call;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
-import ws.tilda.anastasia.biotopeevchargersapp.model.Charger;
-import ws.tilda.anastasia.biotopeevchargersapp.model.GetChargersResponse;
-import ws.tilda.anastasia.biotopeevchargersapp.model.Position;
-import ws.tilda.anastasia.biotopeevchargersapp.model.fetch.ApiClient;
-import ws.tilda.anastasia.biotopeevchargersapp.model.fetch.Query;
+import ws.tilda.anastasia.biotopeevchargersapp.model.business_objects.Charger;
+import ws.tilda.anastasia.biotopeevchargersapp.model.business_objects.GetChargersResponse;
+import ws.tilda.anastasia.biotopeevchargersapp.model.business_objects.Position;
+import ws.tilda.anastasia.biotopeevchargersapp.model.networking.ApiClient;
+import ws.tilda.anastasia.biotopeevchargersapp.model.networking.Query;
 
 import static ws.tilda.anastasia.biotopeevchargersapp.R.id.mapView;
 
@@ -319,7 +319,8 @@ public class ChargerDetailActivity extends AppCompatActivity {
         }
 
         private Query getQueryBody(Query query) {
-            String queryText = getQueryString();
+//            String queryText = getQueryString();
+            String queryText = getString(R.string.query_chargerId_speed_position_available_reservations_dummy);
             query.setQuery(queryText);
             return query;
         }

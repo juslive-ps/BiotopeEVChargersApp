@@ -1,4 +1,4 @@
-package ws.tilda.anastasia.biotopeevchargersapp.model.fetch;
+package ws.tilda.anastasia.biotopeevchargersapp.model.networking;
 
 import android.support.annotation.NonNull;
 
@@ -9,7 +9,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
-import ws.tilda.anastasia.biotopeevchargersapp.model.GetChargersResponse;
+import ws.tilda.anastasia.biotopeevchargersapp.model.business_objects.GetChargersResponse;
 
 public class ApiClient {
     private static final String APIPATH = "https://otaniemi3d.cs.hut.fi/EVChargers/";
