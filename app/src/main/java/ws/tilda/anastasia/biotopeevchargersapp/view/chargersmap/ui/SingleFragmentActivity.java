@@ -1,4 +1,4 @@
-package ws.tilda.anastasia.biotopeevchargersapp.view.chargers_map.ui;
+package ws.tilda.anastasia.biotopeevchargersapp.view.chargersmap.ui;
 
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;

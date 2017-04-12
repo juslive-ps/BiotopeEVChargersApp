@@ -1,4 +1,4 @@
-package ws.tilda.anastasia.biotopeevchargersapp.view.charger_details.ui;
+package ws.tilda.anastasia.biotopeevchargersapp.view.chargerdetails.ui;
 
 import android.Manifest;
 import android.content.Context;
@@ -41,9 +41,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Call;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
-import ws.tilda.anastasia.biotopeevchargersapp.model.business_objects.Charger;
-import ws.tilda.anastasia.biotopeevchargersapp.model.business_objects.GetChargersResponse;
-import ws.tilda.anastasia.biotopeevchargersapp.model.business_objects.Position;
+import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Charger;
+import ws.tilda.anastasia.biotopeevchargersapp.model.objects.GetChargersResponse;
+import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Position;
 import ws.tilda.anastasia.biotopeevchargersapp.model.networking.ApiClient;
 import ws.tilda.anastasia.biotopeevchargersapp.model.networking.Query;
 
@@ -70,12 +70,6 @@ public class ChargerDetailActivity extends AppCompatActivity {
 
     private Context mContext;
 
-    @Bind(R.id.doubleText)
-    TextView doubleText;
-
-    SimpleDateFormat simpleDateFormat;
-
-    DoubleDateAndTimePickerDialog.Builder doubleBuilder;
 
 
     @Override
@@ -85,7 +79,6 @@ public class ChargerDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_charger_detail);
 
         ButterKnife.bind(this);
-        this.simpleDateFormat = new SimpleDateFormat("EEE d MMM HH:mm", Locale.getDefault());
 
         ActionBar actionBar = getSupportActionBar();
 
@@ -123,46 +116,7 @@ public class ChargerDetailActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (doubleBuilder != null)
-            doubleBuilder.close();
-    }
 
-    @OnClick(R.id.doubleLayout)
-    public void doubleClicked() {
-
-        final Calendar calendar = Calendar.getInstance();
-        int currentDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-        int currentMonth = calendar.get(Calendar.MONTH);
-        int currentYear = calendar.get(Calendar.YEAR);
-        calendar.set(Calendar.DAY_OF_MONTH, currentDayOfMonth);
-        calendar.set(Calendar.MONTH, currentMonth);
-        calendar.set(Calendar.YEAR, currentYear);
-
-        calendar.set(Calendar.DAY_OF_MONTH, 5);
-
-        doubleBuilder = new DoubleDateAndTimePickerDialog.Builder(this)
-                .backgroundColor(getResources().getColor(R.color.colorPrimary))
-                .mainColor(getResources().getColor(R.color.colorAccent))
-                .minutesStep(15)
-                .mustBeOnFuture()
-                .title("Make reservation")
-                .tab0Text("Start time")
-                .tab1Text("End time")
-                .listener(new DoubleDateAndTimePickerDialog.Listener() {
-                    @Override
-                    public void onDateSelected(List<Date> dates) {
-                        final StringBuilder stringBuilder = new StringBuilder();
-                        for (Date date : dates) {
-                            stringBuilder.append(simpleDateFormat.format(date)).append("\n");
-                        }
-                        doubleText.setText(stringBuilder.toString());
-                    }
-                });
-        doubleBuilder.display();
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

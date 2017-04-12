@@ -1,4 +1,4 @@
-package ws.tilda.anastasia.biotopeevchargersapp.view.chargers_map.ui;
+package ws.tilda.anastasia.biotopeevchargersapp.view.chargersmap.ui;
 
 import android.Manifest;
 import android.content.Intent;
@@ -38,12 +38,12 @@ import java.util.Locale;
 
 import retrofit2.Call;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
-import ws.tilda.anastasia.biotopeevchargersapp.view.charger_details.ui.ChargerDetailActivity;
-import ws.tilda.anastasia.biotopeevchargersapp.model.business_objects.Charger;
-import ws.tilda.anastasia.biotopeevchargersapp.model.business_objects.GetChargersResponse;
-import ws.tilda.anastasia.biotopeevchargersapp.model.business_objects.Position;
+import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Charger;
+import ws.tilda.anastasia.biotopeevchargersapp.model.objects.GetChargersResponse;
+import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Position;
 import ws.tilda.anastasia.biotopeevchargersapp.model.networking.ApiClient;
 import ws.tilda.anastasia.biotopeevchargersapp.model.networking.Query;
+import ws.tilda.anastasia.biotopeevchargersapp.view.chargerdetails.ui.ChargerDetailActivity;
 
 
 public class ChargerMapFragment extends SupportMapFragment {
@@ -55,11 +55,10 @@ public class ChargerMapFragment extends SupportMapFragment {
             Manifest.permission.ACCESS_COARSE_LOCATION,
     };
 
-    private static final String CHARGER_EXTRA = "CHARGER_EXTRA";
+    public static final String CHARGER_EXTRA = "CHARGER_EXTRA";
     public static final String CHARGER_LAT_EXTRA = "CHARGER_LAT_EXTRA";
     public static final String CHARGER_LON_EXTRA = "CHARGER_LON_EXTRA";
-
-    private static final float RADIUS = 1200f;
+    public static final float RADIUS = 1200f;
 
     private Location mCurrentLocation;
     private GoogleApiClient mClient;
@@ -78,6 +77,59 @@ public class ChargerMapFragment extends SupportMapFragment {
         mClient = getGoogleApiClient();
 
         getMapAsync();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        getActivity().invalidateOptionsMenu();
+        mClient.connect();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        unregisterForContextMenu(getView());
+
+        mClient.disconnect();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_charger_map, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_locate);
+        searchItem.setEnabled(mClient.isConnected());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_locate:
+                if (hasLocationPermission()) {
+                    findCharger();
+                } else {
+                    requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_LOCATION_PERMISSIONS:
+                if (hasLocationPermission()) {
+                    findCharger();
+                }
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     private void getMapAsync() {
@@ -136,58 +188,6 @@ public class ChargerMapFragment extends SupportMapFragment {
                 .build();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        getActivity().invalidateOptionsMenu();
-        mClient.connect();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        unregisterForContextMenu(getView());
-
-        mClient.disconnect();
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.fragment_charger_map, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.action_locate);
-        searchItem.setEnabled(mClient.isConnected());
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_locate:
-                if (hasLocationPermission()) {
-                    findCharger();
-                } else {
-                    requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_LOCATION_PERMISSIONS:
-                if (hasLocationPermission()) {
-                    findCharger();
-                }
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
 
     private void findCharger() {
         LocationRequest request = LocationRequest.create();
@@ -204,13 +204,6 @@ public class ChargerMapFragment extends SupportMapFragment {
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
 
@@ -239,7 +232,7 @@ public class ChargerMapFragment extends SupportMapFragment {
 
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
 
-        addMarkersToMap(chargers, boundsBuilder);
+        addAllMarkersToMap(chargers, boundsBuilder);
 
         setZoom(boundsBuilder);
     }
@@ -257,20 +250,13 @@ public class ChargerMapFragment extends SupportMapFragment {
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.setMyLocationEnabled(true);
     }
 
-    private void addMarkersToMap(List<Charger> chargers, LatLngBounds.Builder boundsBuilder) {
+    private void addAllMarkersToMap(List<Charger> chargers, LatLngBounds.Builder boundsBuilder) {
         for (Charger charger : chargers) {
             Position position = charger.getPosition();
 

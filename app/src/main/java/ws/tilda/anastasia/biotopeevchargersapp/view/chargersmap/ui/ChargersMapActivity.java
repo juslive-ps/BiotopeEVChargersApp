@@ -1,4 +1,4 @@
-package ws.tilda.anastasia.biotopeevchargersapp.view.chargers_map.ui;
+package ws.tilda.anastasia.biotopeevchargersapp.view.chargersmap.ui;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -23,13 +23,12 @@ public class ChargersMapActivity extends SingleFragmentActivity {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int errorCode = apiAvailability.isGooglePlayServicesAvailable(this);
 
-        if(errorCode != ConnectionResult.SUCCESS) {
+        if (errorCode != ConnectionResult.SUCCESS) {
             Dialog errorDialog = apiAvailability
                     .getErrorDialog(this, errorCode, REQUEST_ERROR,
                             new DialogInterface.OnCancelListener() {
                                 @Override
                                 public void onCancel(DialogInterface dialog) {
-                                    // Leave if services are unavailable.
                                     finish();
                                 }
                             });
