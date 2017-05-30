@@ -4,67 +4,43 @@ package ws.tilda.anastasia.biotopeevchargersapp.model.objects;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.List;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
 public class Charger implements Parcelable {
+        private String id;
+        private String model;
+        private String brand;
+        private Plug plug;
 
-    @SerializedName("charger_id")
-    @Expose
-    private String chargerId;
-    @SerializedName("charging_speed")
-    @Expose
-    private String chargingSpeed;
-    @SerializedName("available")
-    @Expose
-    private Boolean available;
-    @SerializedName("position")
-    @Expose
-    private Position position;
-    @SerializedName("reservations")
-    @Expose
-    private List<Reservation> reservations = null;
+        public String getId() {
+            return id;
+        }
 
-    public String getChargerId() {
-        return chargerId;
-    }
+        public void setId(String id) {
+            this.id = id;
+        }
 
-    public void setChargerId(String chargerId) {
-        this.chargerId = chargerId;
-    }
+        public String getModel() {
+            return model;
+        }
 
-    public String getChargingSpeed() {
-        return chargingSpeed;
-    }
+        public void setModel(String model) {
+            this.model = model;
+        }
 
-    public void setChargingSpeed(String chargingSpeed) {
-        this.chargingSpeed = chargingSpeed;
-    }
+        public String getBrand() {
+            return brand;
+        }
 
-    public Boolean getAvailable() {
-        return available;
-    }
+        public void setBrand(String brand) {
+            this.brand = brand;
+        }
 
-    public void setAvailable(Boolean available) {
-        this.available = available;
-    }
+        public Plug getPlug() {
+            return plug;
+        }
 
-    public Position getPosition() {
-        return position;
-    }
-
-    public void setPosition(Position position) {
-        this.position = position;
-    }
-
-    public List<Reservation> getReservations() {
-        return reservations;
-    }
-
-    public void setReservations(List<Reservation> reservations) {
-        this.reservations = reservations;
-    }
+        public void setPlug(Plug plug) {
+            this.plug = plug;
+        }
 
     @Override
     public int describeContents() {
@@ -73,22 +49,20 @@ public class Charger implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.chargerId);
-        dest.writeString(this.chargingSpeed);
-        dest.writeValue(this.available);
-        dest.writeParcelable(this.position, flags);
-        dest.writeTypedList(this.reservations);
+        dest.writeString(this.id);
+        dest.writeString(this.model);
+        dest.writeString(this.brand);
+        dest.writeParcelable(this.plug, flags);
     }
 
     public Charger() {
     }
 
     protected Charger(Parcel in) {
-        this.chargerId = in.readString();
-        this.chargingSpeed = in.readString();
-        this.available = (Boolean) in.readValue(Boolean.class.getClassLoader());
-        this.position = in.readParcelable(Position.class.getClassLoader());
-        this.reservations = in.createTypedArrayList(Reservation.CREATOR);
+        this.id = in.readString();
+        this.model = in.readString();
+        this.brand = in.readString();
+        this.plug = in.readParcelable(Plug.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<Charger> CREATOR = new Parcelable.Creator<Charger>() {

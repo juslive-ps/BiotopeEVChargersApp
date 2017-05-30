@@ -32,18 +32,18 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.List;
-import java.util.Locale;
 
 import retrofit2.Call;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
-import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Charger;
-import ws.tilda.anastasia.biotopeevchargersapp.model.objects.GetChargersResponse;
-import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Position;
+import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser4;
 import ws.tilda.anastasia.biotopeevchargersapp.model.networking.ApiClient;
-import ws.tilda.anastasia.biotopeevchargersapp.model.networking.Query;
+import ws.tilda.anastasia.biotopeevchargersapp.model.objects.GeoCoordinates;
+import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingLot;
+import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingService;
 import ws.tilda.anastasia.biotopeevchargersapp.view.chargerdetails.ui.ChargerDetailActivity;
+//import ws.tilda.anastasia.biotopeevchargersapp.view.chargerdetails.ui.ChargerDetailActivity;
 
 
 public class ChargerMapFragment extends SupportMapFragment {
@@ -55,14 +55,16 @@ public class ChargerMapFragment extends SupportMapFragment {
             Manifest.permission.ACCESS_COARSE_LOCATION,
     };
 
-    public static final String CHARGER_EXTRA = "CHARGER_EXTRA";
-    public static final String CHARGER_LAT_EXTRA = "CHARGER_LAT_EXTRA";
-    public static final String CHARGER_LON_EXTRA = "CHARGER_LON_EXTRA";
-    public static final float RADIUS = 1200f;
+    public static final String PARKINGLOT_EXTRA = "PARKINGLOT_EXTRA";
+    public static final String PARKINGLOT_LAT_EXTRA = "PARKINGLOT_LAT_EXTRA";
+    public static final String PARKINGLOT_LON_EXTRA = "PARKINGLOT_LON_EXTRA";
+
 
     private Location mCurrentLocation;
     private GoogleApiClient mClient;
     private GoogleMap mMap;
+
+    private XmlParser4 xmlParser;
 
 
     public static ChargerMapFragment newInstance() {
@@ -73,6 +75,8 @@ public class ChargerMapFragment extends SupportMapFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        xmlParser = new XmlParser4();
 
         mClient = getGoogleApiClient();
 
@@ -109,7 +113,7 @@ public class ChargerMapFragment extends SupportMapFragment {
         switch (item.getItemId()) {
             case R.id.action_locate:
                 if (hasLocationPermission()) {
-                    findCharger();
+                    findParkingLot();
                 } else {
                     requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
                 }
@@ -125,7 +129,7 @@ public class ChargerMapFragment extends SupportMapFragment {
         switch (requestCode) {
             case REQUEST_LOCATION_PERMISSIONS:
                 if (hasLocationPermission()) {
-                    findCharger();
+                    findParkingLot();
                 }
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -141,20 +145,19 @@ public class ChargerMapFragment extends SupportMapFragment {
                 mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                     @Override
                     public void onInfoWindowClick(Marker marker) {
-                        Charger charger = (Charger) marker.getTag();
+                        ParkingLot parkingLot = (ParkingLot) marker.getTag();
 
-                        Intent intent = setIntent(charger);
+                        Intent intent = setIntent(parkingLot);
 
                         startActivity(intent);
-                        Log.d(TAG, "onInfoWindowClick: " + charger.getChargerId());
                     }
 
                     @NonNull
-                    private Intent setIntent(Charger charger) {
+                    private Intent setIntent(ParkingLot parkingLot) {
                         Intent intent = new Intent(getActivity(), ChargerDetailActivity.class);
-                        intent.putExtra(CHARGER_EXTRA, charger.getChargerId());
-                        intent.putExtra(CHARGER_LAT_EXTRA, charger.getPosition().getLatitude());
-                        intent.putExtra(CHARGER_LON_EXTRA, charger.getPosition().getLongitude());
+                        intent.putExtra(PARKINGLOT_EXTRA, parkingLot);
+                        intent.putExtra(PARKINGLOT_LAT_EXTRA, parkingLot.getPosition().getLatitude());
+                        intent.putExtra(PARKINGLOT_LON_EXTRA, parkingLot.getPosition().getLongitude());
                         return intent;
                     }
                 });
@@ -171,7 +174,7 @@ public class ChargerMapFragment extends SupportMapFragment {
                     public void onConnected(@Nullable Bundle bundle) {
                         getActivity().invalidateOptionsMenu();
 
-                        findCharger();
+                        findParkingLot();
                     }
 
                     @Override
@@ -189,7 +192,7 @@ public class ChargerMapFragment extends SupportMapFragment {
     }
 
 
-    private void findCharger() {
+    private void findParkingLot() {
         LocationRequest request = LocationRequest.create();
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         request.setNumUpdates(1);
@@ -223,7 +226,7 @@ public class ChargerMapFragment extends SupportMapFragment {
         return result == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void updateUI(List<Charger> chargers) {
+    private void updateUI(ParkingService ps) {
         if (mMap == null) {
             return;
         }
@@ -232,14 +235,14 @@ public class ChargerMapFragment extends SupportMapFragment {
 
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
 
-        addAllMarkersToMap(chargers, boundsBuilder);
+        addAllMarkersToMap(ps, boundsBuilder);
 
         setZoom(boundsBuilder);
     }
 
     private void setZoom(LatLngBounds.Builder boundsBuilder) {
         LatLngBounds bounds = boundsBuilder.build();
-        int margin = getResources().getDimensionPixelSize(R.dimen.map_inset_margin);
+        int margin = 10;
         CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, margin);
         mMap.moveCamera(update);
     }
@@ -256,23 +259,23 @@ public class ChargerMapFragment extends SupportMapFragment {
         mMap.setMyLocationEnabled(true);
     }
 
-    private void addAllMarkersToMap(List<Charger> chargers, LatLngBounds.Builder boundsBuilder) {
-        for (Charger charger : chargers) {
-            Position position = charger.getPosition();
+    private void addAllMarkersToMap(ParkingService ps, LatLngBounds.Builder boundsBuilder) {
+        List<ParkingLot> parkingLots = ps.getParkingLots();
+        for (ParkingLot parkingLot : parkingLots) {
+            GeoCoordinates position = parkingLot.getPosition();
 
             LatLng itemPoint = new LatLng(position.getLatitude(), position.getLongitude());
 
             Marker itemMarker = addMarkerToMap(itemPoint, BitmapDescriptorFactory.HUE_GREEN);
 
-            String snippetTitle = getResources().getString(R.string.map_charger_snippet_title,
-                    charger.getChargerId());
+            String snippetTitle = getResources().getString(R.string.map_parking_snippet_title,
+                    parkingLot.getId());
             itemMarker.setTitle(snippetTitle);
 
-            String snippetText = getResources().getString(R.string.map_charger_snippet_description,
-                    charger.getChargingSpeed());
+            String snippetText = getResources().getString(R.string.click_to_see_details);
             itemMarker.setSnippet(snippetText);
 
-            itemMarker.setTag(charger);
+            itemMarker.setTag(parkingLot);
 
             boundsBuilder.include(itemPoint);
         }
@@ -285,58 +288,72 @@ public class ChargerMapFragment extends SupportMapFragment {
         return mMap.addMarker(itemMarker);
     }
 
-    private class SearchTask extends AsyncTask<Object, Object, List<Charger>> {
-        private Query mQuery = new Query();
-        private List<Charger> chargers = new ArrayList<>();
-
-        @Override
-        protected List<Charger> doInBackground(Object... params) {
-            Call<GetChargersResponse> call = callingApi();
-            return getChargers(call);
+    private ParkingService parse(InputStream stream) {
+        ParkingService parkingService = new ParkingService();
+        try {
+            parkingService = xmlParser.parse(stream);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        private List<Charger> getChargers(Call<GetChargersResponse> call) {
+        return parkingService;
+    }
+
+    private class SearchTask extends AsyncTask<Object, Object, ParkingService> {
+        private ParkingService parkingService = new ParkingService();
+        private String response;
+
+        @Override
+        protected ParkingService doInBackground(Object... params) {
+
+            Call<String> call = callingApi();
+            InputStream stream = null;
+            //                stream = new ByteArrayInputStream(getResponse(call).getBytes("UTF-8"));
             try {
-                GetChargersResponse getChargersResponse = call.execute().body();
-                if (getChargersResponse == null) {
+                stream = getActivity().getAssets().open("xmlFile2.xml");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            parkingService = parse(stream);
+
+
+            return parkingService;
+        }
+
+        private String getResponse(Call<String> call) {
+            try {
+                String getResponse = call.execute().body();
+                if (getResponse == null) {
                     Log.e(TAG, "Response is null");
                 } else {
-                    chargers = getChargersResponse.getData().getChargers();
+                    response = getResponse;
                 }
             } catch (IOException e) {
                 e.getMessage();
             }
 
-            return chargers;
+            return response;
         }
 
-        private Call<GetChargersResponse> callingApi() {
-            mQuery = getQueryBody(mQuery);
-            ApiClient.ChargerService chargerService = ApiClient.getApi();
-            return chargerService.getChargers(mQuery);
+        private Call<String> callingApi() {
+            ApiClient.RetrofitService retrofitService = ApiClient.getApi();
+            return retrofitService.getResponse(getString(R.string.query_find_evspot));
         }
 
-        private Query getQueryBody(Query query) {
-//            String queryText = getQueryFormattedString();
-            String queryText = getString(R.string.query_chargerId_speed_position_dummy);
-            query.setQuery(queryText);
-            return query;
-        }
 
-        private String getQueryFormattedString() {
-            float currentLatitude = (float) mCurrentLocation.getLatitude();
-            float currentLongitude = (float) mCurrentLocation.getLongitude();
-
-            return String.format(Locale.US,
-                    getString(R.string.query_chargerId_speed_position),
-                    currentLatitude,
-                    currentLongitude,
-                    RADIUS);
-        }
+//        private String getQueryFormattedString() {
+//            float currentLatitude = (float) mCurrentLocation.getLatitude();
+//            float currentLongitude = (float) mCurrentLocation.getLongitude();
+//
+//            return String.format(Locale.US,
+//                    getString(R.string.query_chargerId_speed_position),
+//                    currentLatitude,
+//                    currentLongitude);
+//        }
 
         @Override
-        protected void onPostExecute(List<Charger> chargers) {
-            updateUI(chargers);
+        protected void onPostExecute(ParkingService parkingService) {
+            updateUI(parkingService);
         }
     }
 }

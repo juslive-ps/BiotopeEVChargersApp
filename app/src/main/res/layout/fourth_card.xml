@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginBottom="8dp"
+                                    android:layout_marginRight="8dp"
+                                    android:layout_marginLeft="8dp"
+                                    app:cardCornerRadius="0dp"
+                                    app:cardElevation="2dp">
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/parking_spot_dimensions_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingStart="15dp"
+            android:paddingTop="10dp"
+            android:text="@string/ev_spot_dimensions_label"
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/parking_spot_dimensions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingStart="15dp"
+            android:paddingTop="10dp"
+            android:textColor="#838B8B"
+            android:textSize="14sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/max_spots_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingStart="15dp"
+            android:paddingTop="0dp"
+            android:text="@string/max_number_of_ev_spots_label"
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/max_spots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingStart="15dp"
+            android:paddingTop="0dp"
+            android:textColor="#838B8B"
+            android:textSize="14sp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/spots_available_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingStart="15dp"
+            android:paddingTop="0dp"
+            android:text="@string/ev_spots_available_label"
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/spots_available"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingStart="15dp"
+            android:paddingTop="0dp"
+            android:textColor="#838B8B"
+            android:textSize="14sp"/>
+    </LinearLayout>
+</LinearLayout>
+
+   </android.support.v7.widget.CardView>

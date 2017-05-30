@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginBottom="8dp"
+                                    android:layout_marginRight="8dp"
+                                    android:layout_marginLeft="8dp"
+                                    app:cardCornerRadius="0dp"
+                                    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/hourly_price_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingStart="15dp"
+            android:paddingTop="10dp"
+            android:text="@string/hourly_price_label"
+            android:textColor="#66CD00"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/parkingLot_hourly_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingStart="15dp"
+            android:paddingTop="10dp"
+            android:textColor="#66cd00"
+            android:textSize="14sp"/>
+
+
+    </LinearLayout>
+   </android.support.v7.widget.CardView>

@@ -6,36 +6,36 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
-import ws.tilda.anastasia.biotopeevchargersapp.model.objects.GetChargersResponse;
 
 public class ApiClient {
-    private static final String APIPATH = "https://otaniemi3d.cs.hut.fi/EVChargers/";
+
+
+    private static final String APIPATH = "http:biotope.cs.hut.fi/omi/node/";
 
     private static OkHttpClient.Builder okhttpClientBuilder = new OkHttpClient.Builder();
 
-    private static ChargerService chargerService = null;
+    private static RetrofitService retrofitService = null;
 
-    public static ChargerService getApi() {
+    public static RetrofitService getApi() {
 
         getLogger();
 
-        if (chargerService == null) {
+        if (retrofitService == null) {
             Retrofit retrofit = getRetrofit();
-            chargerService = retrofit.create(ChargerService.class);
+            retrofitService = retrofit.create(RetrofitService.class);
         }
-        return chargerService;
+        return retrofitService;
     }
 
     @NonNull
     private static Retrofit getRetrofit() {
         return new Retrofit.Builder()
-                        .baseUrl(APIPATH)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .client(okhttpClientBuilder.build())
-                        .build();
+                .baseUrl(APIPATH)
+                .addConverterFactory(new ToStringConverterFactory())
+                .client(okhttpClientBuilder.build())
+                .build();
     }
 
     private static void getLogger() {
@@ -44,8 +44,8 @@ public class ApiClient {
         okhttpClientBuilder.addInterceptor(logging);
     }
 
-    public interface ChargerService {
+    public interface RetrofitService {
         @POST(".")
-        Call<GetChargersResponse> getChargers(@Body Query query);
+        Call<String> getResponse(@Body String query);
     }
 }

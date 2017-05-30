@@ -3,21 +3,30 @@
     <string name="search">Find a charger near you</string>
     <string name="title_activity_maps">Map</string>
 
-    <string name="map_charger_snippet_title">Charger %s </string>
+    <string name="map_parking_snippet_title">EV chargers at %s </string>
     <string name="map_charger_snippet_description">Charging speed: %s</string>
-    <string name="charger_id_label">Charger ID</string>
-    <string name="charger_speed_label">Charger speed</string>
-    <string name="charger_location_label">Charger location</string>
-    <string name="reserve_price_label">Reserve price</string>
-    <string name="no_content">Charger not found</string>
-    <string name="charger_status_label">Status</string>
 
-    <string name="query_chargerId_speed_position">{searchByArea(lat: %1$f, lon: %2$f, radius: %3$f) {charger_id, charging_speed, position {lat, lon}}}</string>
-    <string name="query_chargerId_speed_position_dummy">{searchByArea(lat: 41.0, lon: -71.0, radius: 11200.0) {charger_id, charging_speed, position {lat, lon}}}</string>
-    <string name="query_chargerId_speed_position_available_reservations">{searchByArea(lat: %1$f, lon: %2$f, radius: %3$f) {charger_id, charging_speed, available, position {lat, lon} reservations{timeslot{gte,lte}}}}</string>
-    <string name="query_chargerId_speed_position_available_reservations_dummy">{searchByArea(lat: 41.0, lon: -71.0, radius: 11200.0) {charger_id, charging_speed, available, position {lat, lon} reservations{timeslot{gte,lte}}}}</string>
+    <string name="parkingLot_id_label">Parking Lot Name</string>
+    <string name="parkingLot_owner_label">Owner</string>
+    <string name="parkingLot_opening_hours_label">Opening hours</string>
+    <string name="Address">Address</string>
+    <string name="charger_speed_label">EV Charger speed</string>
+    <string name="hourly_price_label">Hourly price</string>
+    <string name="no_content">Charger not found</string>
+    <string name="availability_status_label">Status</string>
+
     <string name="status_available">available</string>
     <string name="status_not_available">not available</string>
-    <string name="reservation_fragment_title">Reservation times today:</string>
+
+    <string name="query_find_evspot"><![CDATA[<omiEnvelope xmlns=\"http://www.opengroup.org/xsd/omi/1.0/\" version=\"1.0\" ttl=\"0\"><call msgformat=\"odf\"><msg><Objects xmlns=\"http://www.opengroup.org/xsd/odf/1.0/\"><Object><id>ParkingService</id><InfoItem name=\"FindParking\"><value type=\"odf:Objects\"><Objects><Object type=\"FindParkingRequest\"><id>Parameters</id><InfoItem name=\"WantedSpotType\"><value>ElectricVehicle</value></InfoItem><InfoItem name=\"ArrivalTime\"><value type=\"dateTime\">yyyy-mm-ddThh:mm:ss.sss+-hh:mm</value></InfoItem><Object type=\"schema:GeoCoordinates\"><id>Destination</id><InfoItem name=\"latitude\"><value type=\"xs:double\">%1$d</value></InfoItem><InfoItem name=\"longitude\"><value type=\"xs:double\">%1$d</value></InfoItem></Object></Object></Objects></value></InfoItem></Object></Objects></msg></call></omiEnvelope>]]></string>
+
+    <string name="click_to_see_details">Click to see details</string>
+    <string name="plug_type_label">Plug Type</string>
+    <string name="charging_speed_label">Charging Speed</string>
+    <string name="charging_power_label">Charging Power</string>
+    <string name="ev_spot_dimensions_label">EV Spot Dimensions</string>
+    <string name="max_number_of_ev_spots_label">Max Number of EV Spots</string>
+    <string name="ev_spots_available_label">EV Spots Available</string>
+
 
 </resources>
