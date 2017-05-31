@@ -18,15 +18,15 @@
             android:layout_marginBottom="16dp"
             android:layout_marginTop="0dp"/>
 
-        <include layout="@layout/first_card"/>
+        <include layout="@layout/parking_detail_first_card"/>
 
-        <include layout="@layout/second_card"/>
+        <include layout="@layout/parking_detail_second_card"/>
 
-        <include layout="@layout/third_card"/>
+        <include layout="@layout/parking_detail_third_card"/>
 
-        <include layout="@layout/fourth_card"/>
+        <include layout="@layout/parking_detail_fourth_card"/>
 
-        <include layout="@layout/fifth_card"/>
+        <include layout="@layout/parking_detail_fifth_card"/>
 
 
 

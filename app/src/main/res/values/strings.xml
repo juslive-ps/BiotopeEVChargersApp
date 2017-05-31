@@ -18,7 +18,7 @@
     <string name="status_available">available</string>
     <string name="status_not_available">not available</string>
 
-    <string name="query_find_evspot"><![CDATA[<omiEnvelope xmlns=\"http://www.opengroup.org/xsd/omi/1.0/\" version=\"1.0\" ttl=\"0\"><call msgformat=\"odf\"><msg><Objects xmlns=\"http://www.opengroup.org/xsd/odf/1.0/\"><Object><id>ParkingService</id><InfoItem name=\"FindParking\"><value type=\"odf:Objects\"><Objects><Object type=\"FindParkingRequest\"><id>Parameters</id><InfoItem name=\"WantedSpotType\"><value>ElectricVehicle</value></InfoItem><InfoItem name=\"ArrivalTime\"><value type=\"dateTime\">yyyy-mm-ddThh:mm:ss.sss+-hh:mm</value></InfoItem><Object type=\"schema:GeoCoordinates\"><id>Destination</id><InfoItem name=\"latitude\"><value type=\"xs:double\">%1$d</value></InfoItem><InfoItem name=\"longitude\"><value type=\"xs:double\">%1$d</value></InfoItem></Object></Object></Objects></value></InfoItem></Object></Objects></msg></call></omiEnvelope>]]></string>
+    <string name="query_find_evspot"><![CDATA[<omiEnvelope xmlns=\"http://www.opengroup.org/xsd/omi/1.0/\" version=\"1.0\" ttl=\"0\"><call msgformat=\"odf\"><msg><Objects xmlns=\"http://www.opengroup.org/xsd/odf/1.0/\"><Object><id>ParkingService</id><InfoItem name=\"FindParking\"><value type=\"odf\"><Objects><Object type=\"FindParkingRequest\"><id>Parameters</id><description lang=\"English\">List of possible parameters to request.</description><InfoItem name=\"ParkingUsageType\"><value unixTime=\"1495635263\" dateTime=\"2017-05-24T17:14:23.724+03:00\">mv:ElectricVehicleParkingSpace</value><!-- Works without mv: too --></InfoItem><InfoItem name=\"ArrivalTime\"><value unixTime=\"1495635263\" type=\"dateTime\" dateTime=\"2017-05-24T17:14:23.724+03:00\">yyyy-mm-ddThh:mm:ss.sss+-hh:mm</value></InfoItem><Object type=\"schema:GeoCoordinates\"><id>Destination</id><InfoItem name=\"latitude\"><value unixTime=\"1495635263\" type=\"xs:double\" dateTime=\"2017-05-24T17:14:23.724+03:00\">%1$f</value></InfoItem><InfoItem name=\"longitude\"><value unixTime=\"1495635263\" type=\"xs:double\" dateTime=\"2017-05-24T17:14:23.724+03:00\">%2$f</value></InfoItem></Object></Object></Objects></value></InfoItem></Object></Objects></msg></call></omiEnvelope>]]></string>
 
     <string name="click_to_see_details">Click to see details</string>
     <string name="plug_type_label">Plug Type</string>
@@ -27,6 +27,5 @@
     <string name="ev_spot_dimensions_label">EV Spot Dimensions</string>
     <string name="max_number_of_ev_spots_label">Max Number of EV Spots</string>
     <string name="ev_spots_available_label">EV Spots Available</string>
-
-
+    <string name="no_network_connection">No network connection.</string>
 </resources>

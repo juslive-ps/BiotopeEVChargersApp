@@ -31,22 +31,24 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
-import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser4;
+import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser;
 import ws.tilda.anastasia.biotopeevchargersapp.model.networking.ApiClient;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.GeoCoordinates;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingLot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingService;
-import ws.tilda.anastasia.biotopeevchargersapp.view.chargerdetails.ui.ChargerDetailActivity;
-//import ws.tilda.anastasia.biotopeevchargersapp.view.chargerdetails.ui.ChargerDetailActivity;
+import ws.tilda.anastasia.biotopeevchargersapp.view.chargerdetails.ui.ParkingDetailActivity;
 
 
-public class ChargerMapFragment extends SupportMapFragment {
+public class ParkingMapFragment extends SupportMapFragment {
     public static final String TAG = "ChargerMapFragment";
     public static final int REQUEST_LOCATION_PERMISSIONS = 0;
 
@@ -64,11 +66,11 @@ public class ChargerMapFragment extends SupportMapFragment {
     private GoogleApiClient mClient;
     private GoogleMap mMap;
 
-    private XmlParser4 xmlParser;
+    private XmlParser xmlParser;
 
 
-    public static ChargerMapFragment newInstance() {
-        return new ChargerMapFragment();
+    public static ParkingMapFragment newInstance() {
+        return new ParkingMapFragment();
     }
 
     @Override
@@ -76,7 +78,7 @@ public class ChargerMapFragment extends SupportMapFragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        xmlParser = new XmlParser4();
+        xmlParser = new XmlParser();
 
         mClient = getGoogleApiClient();
 
@@ -154,7 +156,7 @@ public class ChargerMapFragment extends SupportMapFragment {
 
                     @NonNull
                     private Intent setIntent(ParkingLot parkingLot) {
-                        Intent intent = new Intent(getActivity(), ChargerDetailActivity.class);
+                        Intent intent = new Intent(getActivity(), ParkingDetailActivity.class);
                         intent.putExtra(PARKINGLOT_EXTRA, parkingLot);
                         intent.putExtra(PARKINGLOT_LAT_EXTRA, parkingLot.getPosition().getLatitude());
                         intent.putExtra(PARKINGLOT_LON_EXTRA, parkingLot.getPosition().getLongitude());
@@ -308,13 +310,19 @@ public class ChargerMapFragment extends SupportMapFragment {
 
             Call<String> call = callingApi();
             InputStream stream = null;
-            //                stream = new ByteArrayInputStream(getResponse(call).getBytes("UTF-8"));
             try {
-                stream = getActivity().getAssets().open("xmlFile2.xml");
-            } catch (IOException e) {
+                stream = new ByteArrayInputStream(getResponse(call).getBytes("UTF-8"));
+                parkingService = parse(stream);
+            } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            parkingService = parse(stream);
+
+
+//            try {
+////                stream = getActivity().getAssets().open("xmlFile2.xml");
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 
 
             return parkingService;
@@ -337,19 +345,21 @@ public class ChargerMapFragment extends SupportMapFragment {
 
         private Call<String> callingApi() {
             ApiClient.RetrofitService retrofitService = ApiClient.getApi();
-            return retrofitService.getResponse(getString(R.string.query_find_evspot));
+//            return retrofitService.getResponse(getString(R.string.query_find_evspot));
+            return retrofitService.getResponse(getQueryFormattedString());
+
         }
 
 
-//        private String getQueryFormattedString() {
-//            float currentLatitude = (float) mCurrentLocation.getLatitude();
-//            float currentLongitude = (float) mCurrentLocation.getLongitude();
-//
-//            return String.format(Locale.US,
-//                    getString(R.string.query_chargerId_speed_position),
-//                    currentLatitude,
-//                    currentLongitude);
-//        }
+        private String getQueryFormattedString() {
+            float currentLatitude = (float) mCurrentLocation.getLatitude();
+            float currentLongitude = (float) mCurrentLocation.getLongitude();
+
+            return String.format(Locale.US,
+                    getString(R.string.query_find_evspot),
+                    currentLatitude,
+                    currentLongitude);
+        }
 
         @Override
         protected void onPostExecute(ParkingService parkingService) {

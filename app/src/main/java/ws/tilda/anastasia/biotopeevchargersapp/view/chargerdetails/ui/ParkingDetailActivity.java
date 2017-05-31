@@ -32,7 +32,7 @@ import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingLot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingSection;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Plug;
 
-public class ChargerDetailActivity extends AppCompatActivity {
+public class ParkingDetailActivity extends AppCompatActivity {
     public static final String TAG = "ChargerDetailActivity";
     public static final String PARKINGLOT_EXTRA = "PARKINGLOT_EXTRA";
 
@@ -67,11 +67,10 @@ public class ChargerDetailActivity extends AppCompatActivity {
     @BindView(R.id.charging_power)
     TextView mChargingPower;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_charger_detail);
+        setContentView(R.layout.activity_parking_detail);
         ButterKnife.bind(this);
 
         mContext = this;

@@ -25,7 +25,7 @@ import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingService;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingSpot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Plug;
 
-public class XmlParser4 {
+public class XmlParser {
     private ParkingService parkingService = new ParkingService();
 
     public ParkingService parse(InputStream is) throws XmlPullParserException, IOException {

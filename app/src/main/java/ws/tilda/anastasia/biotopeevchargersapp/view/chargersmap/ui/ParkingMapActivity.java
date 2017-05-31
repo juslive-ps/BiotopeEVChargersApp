@@ -7,13 +7,13 @@ import android.support.v4.app.Fragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
-public class ChargersMapActivity extends SingleFragmentActivity {
+public class ParkingMapActivity extends SingleFragmentActivity {
     public static final int REQUEST_ERROR = 0;
 
 
     @Override
     protected Fragment createFragment() {
-        return ChargerMapFragment.newInstance();
+        return ParkingMapFragment.newInstance();
     }
 
     @Override
