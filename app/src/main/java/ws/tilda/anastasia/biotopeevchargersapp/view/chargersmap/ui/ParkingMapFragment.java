@@ -40,7 +40,8 @@ import java.util.Locale;
 
 import retrofit2.Call;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
-import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser;
+//import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser;
+import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser2;
 import ws.tilda.anastasia.biotopeevchargersapp.model.networking.ApiClient;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.GeoCoordinates;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingLot;
@@ -61,12 +62,10 @@ public class ParkingMapFragment extends SupportMapFragment {
     public static final String PARKINGLOT_LAT_EXTRA = "PARKINGLOT_LAT_EXTRA";
     public static final String PARKINGLOT_LON_EXTRA = "PARKINGLOT_LON_EXTRA";
 
-
-    private Location mCurrentLocation;
     private GoogleApiClient mClient;
     private GoogleMap mMap;
 
-    private XmlParser xmlParser;
+    private XmlParser2 xmlParser;
 
 
     public static ParkingMapFragment newInstance() {
@@ -78,7 +77,7 @@ public class ParkingMapFragment extends SupportMapFragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        xmlParser = new XmlParser();
+        xmlParser = new XmlParser2();
 
         mClient = getGoogleApiClient();
 
@@ -115,7 +114,7 @@ public class ParkingMapFragment extends SupportMapFragment {
         switch (item.getItemId()) {
             case R.id.action_locate:
                 if (hasLocationPermission()) {
-                    findParkingLot();
+                    findEvParkingLotByCurrentLocation();
                 } else {
                     requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
                 }
@@ -131,7 +130,7 @@ public class ParkingMapFragment extends SupportMapFragment {
         switch (requestCode) {
             case REQUEST_LOCATION_PERMISSIONS:
                 if (hasLocationPermission()) {
-                    findParkingLot();
+                    findEvParkingLotByCurrentLocation();
                 }
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -176,7 +175,8 @@ public class ParkingMapFragment extends SupportMapFragment {
                     public void onConnected(@Nullable Bundle bundle) {
                         getActivity().invalidateOptionsMenu();
 
-                        findParkingLot();
+//                  Only if we want to find nearest parking according current location
+//                        findEvParkingLotByCurrentLocation();
                     }
 
                     @Override
@@ -194,7 +194,7 @@ public class ParkingMapFragment extends SupportMapFragment {
     }
 
 
-    private void findParkingLot() {
+    private void findEvParkingLotByCurrentLocation() {
         LocationRequest request = LocationRequest.create();
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         request.setNumUpdates(1);
@@ -217,10 +217,17 @@ public class ParkingMapFragment extends SupportMapFragment {
                     @Override
                     public void onLocationChanged(Location location) {
                         Log.i(TAG, "Got a fix: " + location);
-                        mCurrentLocation = location;
-                        new SearchTask().execute(location);
+                        new SearchParkingTask().execute(location);
                     }
                 });
+    }
+
+    public void findEvParkingLotBySearchAutocomplete(Location location) {
+        new SearchParkingTask().execute(location);
+    }
+
+    private void findEvParkingLot(Location location) {
+        new SearchParkingTask().execute(location);
     }
 
     private boolean hasLocationPermission() {
@@ -301,14 +308,15 @@ public class ParkingMapFragment extends SupportMapFragment {
         return parkingService;
     }
 
-    private class SearchTask extends AsyncTask<Object, Object, ParkingService> {
+    private class SearchParkingTask extends AsyncTask<Location, Object, ParkingService> {
         private ParkingService parkingService = new ParkingService();
         private String response;
 
         @Override
-        protected ParkingService doInBackground(Object... params) {
+        protected ParkingService doInBackground(Location... params) {
+            Location location = params[0];
 
-            Call<String> call = callingApi();
+            Call<String> call = callingApi(location);
             InputStream stream = null;
             try {
                 stream = new ByteArrayInputStream(getResponse(call).getBytes("UTF-8"));
@@ -343,22 +351,22 @@ public class ParkingMapFragment extends SupportMapFragment {
             return response;
         }
 
-        private Call<String> callingApi() {
+        private Call<String> callingApi(Location location) {
             ApiClient.RetrofitService retrofitService = ApiClient.getApi();
 //            return retrofitService.getResponse(getString(R.string.query_find_evspot));
-            return retrofitService.getResponse(getQueryFormattedString());
+            return retrofitService.getResponse(getQueryFormattedString(location));
 
         }
 
 
-        private String getQueryFormattedString() {
-            float currentLatitude = (float) mCurrentLocation.getLatitude();
-            float currentLongitude = (float) mCurrentLocation.getLongitude();
+        private String getQueryFormattedString(Location location) {
+            float desiredLatitude = (float) location.getLatitude();
+            float desiredLongitude = (float) location.getLongitude();
 
             return String.format(Locale.US,
                     getString(R.string.query_find_evspot),
-                    currentLatitude,
-                    currentLongitude);
+                    desiredLatitude,
+                    desiredLongitude);
         }
 
         @Override
@@ -366,4 +374,5 @@ public class ParkingMapFragment extends SupportMapFragment {
             updateUI(parkingService);
         }
     }
+
 }

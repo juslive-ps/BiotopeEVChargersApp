@@ -28,4 +28,9 @@
     <string name="max_number_of_ev_spots_label">Max Number of EV Spots</string>
     <string name="ev_spots_available_label">EV Spots Available</string>
     <string name="no_network_connection">No network connection.</string>
+    <string name="choose_an_ev_spot">Choose an EV Spot</string>
+    <string name="spot_status_label">Available now:</string>
+    <string name="query_book_evspot"><![CDATA[<omiEnvelope xmlns=\"http://www.opengroup.org/xsd/omi/1.0/\" version=\"1.0\" ttl=\"0\"><write msgformat=\"odf\"><msg><Objects xmlns=\"http://www.opengroup.org/xsd/odf/1.0/\"><Object><id>ParkingService</id><Object><id>ParkingFacilities</id><Object><id>%1$s</id><Object><id>ParkingSpaceTypes</id><Object><id>ElectricVehicleParkingSpace</id><Object><id>Spaces</id><Object type=\"mv:ParkingSpace\"><id>%2$s</id><InfoItem name=\"Available\"><value>%4$s</value></InfoItem><InfoItem name=\"User\"><value>%3$s</value></InfoItem></Object></Object></Object></Object></Object></Object></Object></Objects></msg></write></omiEnvelope>]]></string>
+    <string name="use_parking">Use parking</string>
+    <string name="use_charger">Use charger</string>
 </resources>

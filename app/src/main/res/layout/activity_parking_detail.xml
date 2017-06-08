@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:orientation="vertical"
-                  android:title="Parking lot name">
+                  android:orientation="vertical">
 
         <com.google.android.gms.maps.MapView
             android:id="@+id/mapView"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="0dp"
             android:layout_marginTop="0dp"/>
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="openEvSpotListActivity"
+            android:text="@string/choose_an_ev_spot"/>
 
         <include layout="@layout/parking_detail_first_card"/>
 
@@ -25,101 +30,6 @@
         <include layout="@layout/parking_detail_third_card"/>
 
         <include layout="@layout/parking_detail_fourth_card"/>
-
-        <include layout="@layout/parking_detail_fifth_card"/>
-
-
-
-
-        <!--<TextView-->
-            <!--style="?android:listViewStyle"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="16dp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--android:labelFor="@+id/parkingLot_id"-->
-            <!--android:text="@string/parkingLot_id_label"/>-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/parkingLot_id"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginBottom="8dp"-->
-            <!--android:layout_marginLeft="16dp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--tools:text="Parking 1"/>-->
-
-        <!--<TextView-->
-            <!--style="?android:listViewStyle"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="16dp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--android:labelFor="@+id/parkingLot_location"-->
-            <!--android:text="@string/Address"/>-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/parkingLot_location"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginBottom="8dp"-->
-            <!--android:layout_marginLeft="16dp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--android:text="Espoo, Finland"/>-->
-
-        <!--<TextView-->
-            <!--style="?android:listViewStyle"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="16dp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--android:labelFor="@+id/parkingLot_owner"-->
-            <!--android:text="@string/parkingLot_owner_label"/>-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/parkingLot_owner"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginBottom="8dp"-->
-            <!--android:layout_marginLeft="16dp"-->
-            <!--android:layout_marginRight="16dp"/>-->
-
-        <!--<TextView-->
-            <!--style="?android:listViewStyle"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="16dp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--android:labelFor="@+id/opening_hours"-->
-            <!--android:text="@string/opening_hours_label"/>-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/opening_hours"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginBottom="8dp"-->
-            <!--android:layout_marginLeft="16dp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--tools:text="Available"/>-->
-
-        <!--<TextView-->
-
-            <!--style="?android:listViewStyle"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="16dp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--android:labelFor="@+id/charger_price"-->
-            <!--android:text="@string/hourly_price_label"/>-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/charger_price"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginBottom="8dp"-->
-            <!--android:layout_marginLeft="16dp"-->
-            <!--android:layout_marginRight="16dp"/>-->
-
 
     </LinearLayout>
 

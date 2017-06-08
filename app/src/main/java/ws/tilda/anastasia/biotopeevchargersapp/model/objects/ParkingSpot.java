@@ -7,6 +7,15 @@ public class ParkingSpot implements Parcelable {
     private String id;
     private boolean isAvailable;
     private String user;
+    private Charger charger;
+
+    public Charger getCharger() {
+        return charger;
+    }
+
+    public void setCharger(Charger charger) {
+        this.charger = charger;
+    }
 
     public String getId() {
         return id;
@@ -32,6 +41,9 @@ public class ParkingSpot implements Parcelable {
         this.user = user;
     }
 
+    public ParkingSpot() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -42,18 +54,17 @@ public class ParkingSpot implements Parcelable {
         dest.writeString(this.id);
         dest.writeByte(this.isAvailable ? (byte) 1 : (byte) 0);
         dest.writeString(this.user);
-    }
-
-    public ParkingSpot() {
+        dest.writeParcelable(this.charger, flags);
     }
 
     protected ParkingSpot(Parcel in) {
         this.id = in.readString();
         this.isAvailable = in.readByte() != 0;
         this.user = in.readString();
+        this.charger = in.readParcelable(Charger.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<ParkingSpot> CREATOR = new Parcelable.Creator<ParkingSpot>() {
+    public static final Creator<ParkingSpot> CREATOR = new Creator<ParkingSpot>() {
         @Override
         public ParkingSpot createFromParcel(Parcel source) {
             return new ParkingSpot(source);

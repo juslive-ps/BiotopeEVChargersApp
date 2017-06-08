@@ -13,14 +13,14 @@ public class ParkingSection implements Parcelable {
     private int numberOfSpotsAvailable;
     private double hourlyPrice;
     private List<ParkingSpot> mParkingSpots;
-    private Charger charger;
+    private Vehicle vehicle;
 
-    public Charger getCharger() {
-        return charger;
+    public Vehicle getVehicle() {
+        return vehicle;
     }
 
-    public void setCharger(Charger charger) {
-        this.charger = charger;
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
     }
 
     public double getMaxLength() {
@@ -83,6 +83,9 @@ public class ParkingSection implements Parcelable {
         this.id = id;
     }
 
+    public ParkingSection() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -97,10 +100,7 @@ public class ParkingSection implements Parcelable {
         dest.writeInt(this.numberOfSpotsAvailable);
         dest.writeDouble(this.hourlyPrice);
         dest.writeTypedList(this.mParkingSpots);
-        dest.writeParcelable(this.charger, flags);
-    }
-
-    public ParkingSection() {
+        dest.writeParcelable(this.vehicle, flags);
     }
 
     protected ParkingSection(Parcel in) {
@@ -111,10 +111,10 @@ public class ParkingSection implements Parcelable {
         this.numberOfSpotsAvailable = in.readInt();
         this.hourlyPrice = in.readDouble();
         this.mParkingSpots = in.createTypedArrayList(ParkingSpot.CREATOR);
-        this.charger = in.readParcelable(Charger.class.getClassLoader());
+        this.vehicle = in.readParcelable(Vehicle.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<ParkingSection> CREATOR = new Parcelable.Creator<ParkingSection>() {
+    public static final Creator<ParkingSection> CREATOR = new Creator<ParkingSection>() {
         @Override
         public ParkingSection createFromParcel(Parcel source) {
             return new ParkingSection(source);

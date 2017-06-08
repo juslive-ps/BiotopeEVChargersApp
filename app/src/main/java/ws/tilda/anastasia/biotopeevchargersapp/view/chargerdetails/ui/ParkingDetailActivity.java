@@ -2,6 +2,7 @@ package ws.tilda.anastasia.biotopeevchargersapp.view.chargerdetails.ui;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -21,6 +23,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -30,17 +33,21 @@ import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Charger;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.GeoCoordinates;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingLot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingSection;
+import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingSpot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Plug;
 
 public class ParkingDetailActivity extends AppCompatActivity {
-    public static final String TAG = "ChargerDetailActivity";
+    public static final String TAG = "ParkingDetailActivity";
     public static final String PARKINGLOT_EXTRA = "PARKINGLOT_EXTRA";
-
+    private static final String EXTRA = "evParkingSpotsList";
+    private static final String EXTRA_PARKING_LOT = "parkingLot";
 
     private ParkingLot mParkingLot;
     private GoogleMap mMap;
 
     private Context mContext;
+
+    private ArrayList<ParkingSpot> evParkingSpots;
 
     @BindView(R.id.mapView)
     MapView mMapView;
@@ -60,12 +67,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
     TextView mMaxSpots;
     @BindView(R.id.spots_available)
     TextView mSpotsAvailable;
-    @BindView(R.id.plugtype)
-    TextView mPlugType;
-    @BindView(R.id.charging_speed)
-    TextView mChargingSpeed;
-    @BindView(R.id.charging_power)
-    TextView mChargingPower;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +87,6 @@ public class ParkingDetailActivity extends AppCompatActivity {
         }
 
         GeoCoordinates parkingLotPosition = mParkingLot.getPosition();
-        double parkingLotLatitude = parkingLotPosition.getLatitude();
-        double parkingLotLongitude = parkingLotPosition.getLongitude();
 
         mMapView.onCreate(savedInstanceState);
 
@@ -124,6 +124,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
         mParkingLotOwner.setText(parkingLot.getOwner());
         mOpeningHours.setText(parkingLot.getOpeningHours().getOpen()
                 + " - " + parkingLot.getOpeningHours().getClose());
+        mAddress.setText(parkingLot.getPosition().getAddress().toString());
         fillEvSectionInfo(parkingLot);
 
         enableMyLocation();
@@ -136,19 +137,23 @@ public class ParkingDetailActivity extends AppCompatActivity {
         List<ParkingSection> parkingSections = parkingLot.getParkingSectionList();
         ParkingSection evParkingSection = extractEvParkingSection(parkingSections);
         mHourlyPrice.setText(Double.toString(evParkingSection.getHourlyPrice()) + " euro");
-        mEvSpotDimensions.setText(Double.toString(evParkingSection.getMaxWidth()) + " x "
-                + Double.toString(evParkingSection.getMaxLength()));
+        mEvSpotDimensions.setText(evParkingSection.getVehicle().getDepth() + " x "
+                + evParkingSection.getVehicle().getWidth() + " x "
+                + evParkingSection.getVehicle().getHeight());
         mMaxSpots.setText(String.valueOf(evParkingSection.getNumberOfSpots()));
         mSpotsAvailable.setText(String.valueOf(evParkingSection.getNumberOfSpotsAvailable()));
 
-        Charger charger = evParkingSection.getCharger();
-        Plug plug = charger.getPlug();
+        evParkingSpots = (ArrayList<ParkingSpot>) evParkingSection.getParkingSpots();
+//        for (ParkingSpot evParkingSpot : evParkingSpots) {
+//            Charger charger = evParkingSpot.getCharger();
+//            Plug plug = charger.getPlug();
+//
+//            mPlugType.setText(plug.getPlugType());
+//            mChargingSpeed.setText(plug.getChargingSpeed());
+//            mChargingPower.setText(plug.getPower());
+//    }
 
-        mPlugType.setText(plug.getPlugType());
-        mChargingSpeed.setText(plug.getChargingSpeed());
-        mChargingPower.setText(plug.getPower());
-
-    }
+}
 
     private ParkingSection extractEvParkingSection(List<ParkingSection> parkingSections) {
         ParkingSection evParkingSection = null;
@@ -204,40 +209,10 @@ public class ParkingDetailActivity extends AppCompatActivity {
         mMap.setMyLocationEnabled(true);
     }
 
-//    private void setChargerStatus(Charger charger) {
-//        boolean isAvailable = charger.getBrand();
-//        if (!isAvailable) {
-//            mChargerStatus.setText(R.string.status_not_available);
-//        } else {
-//            mChargerStatus.setText(R.string.status_available);
-//        }
-//    }
-
-//    private void setChargerAddress(Charger charger) {
-//        double chargerLatitude = (double) charger.getPosition().getLatitude();
-//        double chargerLongitude = (double) charger.getPosition().getLongitude();
-//        String address = getAddress(chargerLatitude, chargerLongitude);
-//        mChargerLocation.setText(address);
-//    }
-
-
-//    private String getAddress(double latitude, double longitude) {
-//        StringBuilder result = new StringBuilder();
-//        try {
-//            Geocoder geocoder = new Geocoder(this, Locale.US);
-//            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 10);
-//            if (addresses != null && addresses.size() > 0) {
-//                for (Address adr : addresses) {
-//                    if (adr.getLocality() != null && adr.getLocality().length() > 0) {
-//                        return adr.getLocality() + ", "
-//                                + adr.getCountryName();
-//                    }
-//                }
-//            }
-//        } catch (IOException e) {
-//            Log.e("tag", e.getMessage());
-//        }
-//
-//        return null;
-//    }
+    public void openEvSpotListActivity(View view) {
+        Intent intent = new Intent(ParkingDetailActivity.this, EvSpotListActivity.class);
+        intent.putParcelableArrayListExtra(EXTRA, evParkingSpots);
+        intent.putExtra(EXTRA_PARKING_LOT, mParkingLot);
+        startActivity(intent);
+    }
 }
