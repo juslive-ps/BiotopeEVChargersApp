@@ -15,15 +15,25 @@ import ws.tilda.anastasia.biotopeevchargersapp.R;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingSpot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Plug;
 
+import static android.R.attr.id;
+
 public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAdapter.EvParkingSpotsViewHolder> {
     private List<ParkingSpot> evParkingSpots;
     private Context mContext;
-    static boolean isSuccessfull = true;
-    private EvParkingSpotsAdapter.EvParkingSpotsViewHolder viewHolder;
+    static String isSuccessfull = "";
 
     public EvParkingSpotsAdapter(List<ParkingSpot> evParkingSpots, Context context) {
         this.evParkingSpots = evParkingSpots;
         this.mContext=context;
+        isSuccessfull = null;
+    }
+
+//    public String isSuccessfull() {
+//        return isSuccessfull;
+//    }
+//
+    public void setSuccessfull(String successfull) {
+        isSuccessfull = successfull;
     }
 
     @Override
@@ -33,12 +43,11 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
     }
 
     @Override
-    public void onBindViewHolder(EvParkingSpotsAdapter.EvParkingSpotsViewHolder holder, final int position) {
+    public void onBindViewHolder(final EvParkingSpotsAdapter.EvParkingSpotsViewHolder holder, final int position) {
         final Button buttonUseParking = holder.buttonUseParking;
         final Button buttonUseCharger = holder.buttonUseCharger;
-        viewHolder = holder;
 
-        ParkingSpot evParkingSpot = evParkingSpots.get(position);
+        final ParkingSpot evParkingSpot = evParkingSpots.get(position);
         Plug plug = evParkingSpot.getCharger().getPlug();
         holder.evSpotName.setText(evParkingSpot.getId());
         holder.evSpotStatus.setText(Boolean.toString(evParkingSpot.isAvailable()));
@@ -75,8 +84,9 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
                 if(status == 1) {
                     if (mContext instanceof EvSpotListActivity) {
                         ((EvSpotListActivity) mContext).reserveEvParkingSpot(v, position);
-                        if(isSuccessfull) {
-                            viewHolder.evSpotStatus.setText("false");
+                        if(isSuccessfull.equals("200")) {
+                            holder.evSpotStatus.setText("false");
+                           // evParkingSpot.setAvailable(false);
                             Toast.makeText(mContext, "Parking reservation successful!",
                                     Toast.LENGTH_SHORT).show();
                             buttonUseParking.setText("Leave Parking");
@@ -91,8 +101,9 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
                 } else if (status == 2){
                     if (mContext instanceof EvSpotListActivity) {
                         ((EvSpotListActivity) mContext).leaveEvParkingSpot(v, position);
-                        if(isSuccessfull) {
-                            viewHolder.evSpotStatus.setText("true");
+                        if(isSuccessfull.equals("200")) {
+                            holder.evSpotStatus.setText("true");
+                            //evParkingSpot.setAvailable(true);
                             Toast.makeText(mContext, "You successfully unbooked parking", Toast.LENGTH_SHORT).show();
                             buttonUseParking.setText("Use Parking");
                             v.setTag(1);
@@ -111,7 +122,7 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
 
     @Override
     public int getItemCount() {
-        return evParkingSpots.size();
+        return (null != evParkingSpots ? evParkingSpots.size() : 0);
     }
 
     public static class EvParkingSpotsViewHolder extends RecyclerView.ViewHolder {

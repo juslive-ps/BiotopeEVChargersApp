@@ -4,11 +4,13 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -23,16 +25,25 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
+import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser2;
+import ws.tilda.anastasia.biotopeevchargersapp.model.networking.ApiClient;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Charger;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.GeoCoordinates;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingLot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingSection;
+import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingService;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingSpot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Plug;
 
@@ -47,7 +58,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
 
     private Context mContext;
 
-    private ArrayList<ParkingSpot> evParkingSpots;
+    static ArrayList<ParkingSpot> evParkingSpots = new ArrayList<>();
 
     @BindView(R.id.mapView)
     MapView mMapView;
@@ -68,12 +79,17 @@ public class ParkingDetailActivity extends AppCompatActivity {
     @BindView(R.id.spots_available)
     TextView mSpotsAvailable;
 
+    private XmlParser2 parser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parking_detail);
         ButterKnife.bind(this);
+
+        parser = new XmlParser2();
+
 
         mContext = this;
 
@@ -144,15 +160,6 @@ public class ParkingDetailActivity extends AppCompatActivity {
         mSpotsAvailable.setText(String.valueOf(evParkingSection.getNumberOfSpotsAvailable()));
 
         evParkingSpots = (ArrayList<ParkingSpot>) evParkingSection.getParkingSpots();
-//        for (ParkingSpot evParkingSpot : evParkingSpots) {
-//            Charger charger = evParkingSpot.getCharger();
-//            Plug plug = charger.getPlug();
-//
-//            mPlugType.setText(plug.getPlugType());
-//            mChargingSpeed.setText(plug.getChargingSpeed());
-//            mChargingPower.setText(plug.getPower());
-//    }
-
 }
 
     private ParkingSection extractEvParkingSection(List<ParkingSection> parkingSections) {
@@ -209,10 +216,86 @@ public class ParkingDetailActivity extends AppCompatActivity {
         mMap.setMyLocationEnabled(true);
     }
 
+    private ParkingService parseParkingService(InputStream stream) {
+        ParkingService parkingService = new ParkingService();
+        try {
+            parkingService = parser.parse(stream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return parkingService;
+    }
+
     public void openEvSpotListActivity(View view) {
+        new SearchParkingLotsListTask().execute(mParkingLot.getId());
+
         Intent intent = new Intent(ParkingDetailActivity.this, EvSpotListActivity.class);
         intent.putParcelableArrayListExtra(EXTRA, evParkingSpots);
         intent.putExtra(EXTRA_PARKING_LOT, mParkingLot);
         startActivity(intent);
     }
+
+    private class SearchParkingLotsListTask extends AsyncTask<String, Object, ParkingService> {
+        private ParkingService parkingService = new ParkingService();
+        private String response;
+
+        @Override
+        protected ParkingService doInBackground(String ... params) {
+            String parkingLotId = params[0];
+
+            Call<String> call = callingApi(parkingLotId);
+            InputStream stream = null;
+            try {
+                stream = new ByteArrayInputStream(getResponse(call).getBytes("UTF-8"));
+                parkingService = parseParkingService(stream);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            return parkingService;
+        }
+
+        private String getResponse(Call<String> call) {
+            try {
+                String getResponse = call.execute().body();
+                if (getResponse == null) {
+                    Log.e(TAG, "Response is null");
+                } else {
+                    response = getResponse;
+                }
+            } catch (IOException e) {
+                e.getMessage();
+            }
+
+            return response;
+        }
+
+        private Call<String> callingApi(String parkingLotId) {
+            ApiClient.RetrofitService retrofitService = ApiClient.getApi();
+            return retrofitService.getResponse(getQueryFormattedString(parkingLotId));
+
+        }
+
+
+        private String getQueryFormattedString(String parkingLotId) {
+
+            return String.format(Locale.US,
+                    getString(R.string.query_find_evspotsList),
+                    parkingLotId);
+        }
+
+        @Override
+        protected void onPostExecute(ParkingService parkingService) {
+            List<ParkingLot> parkingLots = parkingService.getParkingLots();
+            for (ParkingLot parkingLot : parkingLots) {
+                if (parkingLot.getId().equals(mParkingLot.getId())) {
+                    evParkingSpots =
+                            (ArrayList) parkingLot.getParkingSectionList().get(0).getParkingSpots();
+
+                }
+            }
+
+        }
+    }
+
 }

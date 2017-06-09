@@ -29,6 +29,8 @@ import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingSpot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Registration;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.User;
 
+import static android.R.attr.id;
+
 public class EvSpotListActivity extends AppCompatActivity {
 
     private static final String EXTRA = "evParkingSpotsList";
@@ -44,6 +46,7 @@ public class EvSpotListActivity extends AppCompatActivity {
     private List<User> users;
     private XmlParser2 parser;
     private EvParkingSpotsAdapter evParkingSpotsAdapter;
+    private String parkingLotId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,6 +55,7 @@ public class EvSpotListActivity extends AppCompatActivity {
 
         evParkingSpotsList = getIntent().getParcelableArrayListExtra(EXTRA);
         parkingLot = getIntent().getParcelableExtra(EXTRA_PARKING_LOT);
+        parkingLotId = parkingLot.getId();
 
         user = new User();
         user.setUsername("CurrentUser");
@@ -61,11 +65,13 @@ public class EvSpotListActivity extends AppCompatActivity {
         users = registration.getUsers();
         parser = new XmlParser2();
 
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
 
         recyclerView = (RecyclerView) findViewById(R.id.activity_ev_spot_list_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -74,7 +80,6 @@ public class EvSpotListActivity extends AppCompatActivity {
 
         evParkingSpotsAdapter = new EvParkingSpotsAdapter(evParkingSpotsList, this);
         recyclerView.setAdapter(evParkingSpotsAdapter);
-
     }
 
     public User getUser() {
@@ -124,12 +129,10 @@ public class EvSpotListActivity extends AppCompatActivity {
         return responseCode;
     }
 
+
     private void updateUi(String responseCode) {
-        if (responseCode.equals("200")) {
-            evParkingSpotsAdapter.isSuccessfull = true;
-        } else if (responseCode.equals("400")) {
-            evParkingSpotsAdapter.isSuccessfull = false;
-        }
+            evParkingSpotsAdapter.setSuccessfull(responseCode);
+
     }
 
 
@@ -194,7 +197,7 @@ public class EvSpotListActivity extends AppCompatActivity {
         protected void onPostExecute(String responseCode) {
             updateUi(responseCode);
         }
-    }
 
+    }
 
 }
