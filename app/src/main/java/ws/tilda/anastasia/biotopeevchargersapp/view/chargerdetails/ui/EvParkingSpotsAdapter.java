@@ -15,25 +15,15 @@ import ws.tilda.anastasia.biotopeevchargersapp.R;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingSpot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Plug;
 
-import static android.R.attr.id;
 
 public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAdapter.EvParkingSpotsViewHolder> {
     private List<ParkingSpot> evParkingSpots;
     private Context mContext;
-    static String isSuccessfull = "";
 
     public EvParkingSpotsAdapter(List<ParkingSpot> evParkingSpots, Context context) {
         this.evParkingSpots = evParkingSpots;
-        this.mContext=context;
-        isSuccessfull = null;
-    }
+        this.mContext = context;
 
-//    public String isSuccessfull() {
-//        return isSuccessfull;
-//    }
-//
-    public void setSuccessfull(String successfull) {
-        isSuccessfull = successfull;
     }
 
     @Override
@@ -55,74 +45,165 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
         holder.chargingSpeed.setText(plug.getChargingSpeed());
         holder.chargingPower.setText(plug.getPower());
 
+//        if(evParkingSpot.getUser().equals("TK")) {
+//            evParkingSpot.setBookedByOurUser(true);
+//        } else if ((evParkingSpot.getUser().equals("NONE"))) {
+//            evParkingSpot.setBookedByOurUser(false);
+//        } else {
+//            evParkingSpot.setBookedByOurUser(false);
+//        }
+
+
+
+//        if (evParkingSpot.isBookedByOurUser()==true) {
+//            buttonUseParking.setText("Leave Parking");
+//            buttonUseParking.setEnabled(true);
+//            buttonUseCharger.setEnabled(true);
+//        } else if(evParkingSpot.isBookedByOurUser()==false) {
+//            if(evParkingSpot.isAvailable() == true) {
+//                buttonUseParking.setText("Use Parking");
+//                buttonUseParking.setEnabled(true);
+//                buttonUseCharger.setEnabled(false);
+//            } else if (evParkingSpot.isAvailable() == false) {
+//                buttonUseParking.setText("Use Parking");
+//                buttonUseParking.setEnabled(false);
+//                buttonUseCharger.setEnabled(false);
+//            }
+//        }
+
 
 
         if (evParkingSpot.isAvailable() == false) {
-            if(evParkingSpot.getUser().equals(((EvSpotListActivity) mContext).getUser().getUsername())) {
+            if (evParkingSpot.getUser().equals(((EvSpotListActivity) mContext).getUser().getUsername())) {
+                evParkingSpot.setBookedByOurUser(true);
                 buttonUseParking.setEnabled(true);
-                buttonUseParking.setTag(2);
                 buttonUseParking.setText("Leave Parking");
+                buttonUseCharger.setEnabled(true);
+                evParkingSpot.getCharger().setLidOpened(false);
             } else {
+                evParkingSpot.setBookedByOurUser(false);
                 buttonUseParking.setEnabled(false);
-                buttonUseParking.setTag(1);
                 buttonUseParking.setText("Use Parking");
+                evParkingSpot.getCharger().setLidOpened(false);
             }
         } else {
+            evParkingSpot.setBookedByOurUser(false);
             buttonUseParking.setEnabled(true);
-            buttonUseParking.setTag(1);
             buttonUseParking.setText("Use Parking");
+            buttonUseCharger.setEnabled(true);
+            evParkingSpot.getCharger().setLidOpened(false);
+        }
 
-            buttonUseCharger.setEnabled(false);
+        if (evParkingSpot.isBookedByOurUser() == false) {
+            if(evParkingSpot.isAvailable() == false) {
+                buttonUseParking.setEnabled(false);
+                buttonUseParking.setText("Use Parking");
+                buttonUseCharger.setEnabled(false);
+            } else if(evParkingSpot.isAvailable() == true) {
+                buttonUseParking.setEnabled(true);
+                buttonUseParking.setText("Use Parking");
+                buttonUseCharger.setEnabled(false);
+            }
+        } else {
+            buttonUseCharger.setEnabled(true);
+
         }
 
 
 
-        buttonUseParking.setOnClickListener(new View.OnClickListener(){
+        buttonUseParking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int status = (Integer) v.getTag();
-                if(status == 1) {
+                if (evParkingSpot.isBookedByOurUser() == false) {
                     if (mContext instanceof EvSpotListActivity) {
                         ((EvSpotListActivity) mContext).reserveEvParkingSpot(v, position);
-                        if(isSuccessfull.equals("200")) {
-                            holder.evSpotStatus.setText("false");
-                           // evParkingSpot.setAvailable(false);
-                            Toast.makeText(mContext, "Parking reservation successful!",
-                                    Toast.LENGTH_SHORT).show();
+                        if (evParkingSpot.isBookedByOurUser() == true) {
+                            buttonUseParking.setEnabled(true);
                             buttonUseParking.setText("Leave Parking");
-                            v.setTag(2);
-                            buttonUseCharger.setEnabled(true);
 
-                        } else {
-                            Toast.makeText(mContext, "Parking is already reserved for someone else",
-                                    Toast.LENGTH_SHORT).show();
+                            buttonUseCharger.setEnabled(true);
+                            evParkingSpot.setUser("TK");
                         }
                     }
-                } else if (status == 2){
+                } else if (evParkingSpot.isBookedByOurUser() == true) {
                     if (mContext instanceof EvSpotListActivity) {
                         ((EvSpotListActivity) mContext).leaveEvParkingSpot(v, position);
-                        if(isSuccessfull.equals("200")) {
-                            holder.evSpotStatus.setText("true");
-                            //evParkingSpot.setAvailable(true);
-                            Toast.makeText(mContext, "You successfully unbooked parking", Toast.LENGTH_SHORT).show();
+                        if (evParkingSpot.isBookedByOurUser() == false) {
+                            buttonUseParking.setEnabled(true);
                             buttonUseParking.setText("Use Parking");
-                            v.setTag(1);
-                            buttonUseCharger.setEnabled(false);
 
-                        } else {
-                            Toast.makeText(mContext, "Something got wrong, try again!", Toast.LENGTH_SHORT).show();
+                            buttonUseCharger.setEnabled(true);
+                            evParkingSpot.setUser("NONE");
                         }
+
                     }
 
                 }
+
             }
         });
+
+//        buttonUseCharger.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (evParkingSpot.getCharger().isLidOpened() == false) {
+//                    if (mContext instanceof EvSpotListActivity) {
+//                        ((EvSpotListActivity) mContext).useCharger(position);
+//                        if (evParkingSpot.getCharger().isLidOpened() == true)
+//
+//                            buttonUseCharger.setText("Close charger");
+//
+//                    }
+//                }
+//                } else if (evParkingSpot.isBookedByOurUser() == true) {
+//                    if (mContext instanceof EvSpotListActivity) {
+//                        ((EvSpotListActivity) mContext).leaveEvParkingSpot(v, position);
+//                        if (evParkingSpot.isBookedByOurUser() == false) {
+//                            buttonUseParking.setEnabled(true);
+//                            buttonUseParking.setText("Use Parking");
+//
+//                            buttonUseCharger.setEnabled(true);
+//                            evParkingSpot.setUser("NONE");
+//                        }
+//                    }
+//
+//                }
+
+//            }
+//        });
 
     }
 
     @Override
     public int getItemCount() {
         return (null != evParkingSpots ? evParkingSpots.size() : 0);
+    }
+
+
+    public void changeParkingBookState(int position, String responseCode) {
+        if (responseCode.equals("200")) {
+            if (evParkingSpots.get(position).isBookedByOurUser() == true) {
+                evParkingSpots.get(position).setBookedByOurUser(false);
+                evParkingSpots.get(position).setAvailable(true);
+            } else if (evParkingSpots.get(position).isBookedByOurUser() == false) {
+                evParkingSpots.get(position).setBookedByOurUser(true);
+                evParkingSpots.get(position).setAvailable(false);
+            }
+            Toast.makeText(mContext, "Success", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(mContext, "Something got wrong, try again", Toast.LENGTH_SHORT).show();
+        }
+        notifyItemChanged(position);
+    }
+
+    public void changeUseChargerState(int position, String responseCode) {
+        if (responseCode.equals("200")) {
+            evParkingSpots.get(position).getCharger().setLidOpened(true);
+            Toast.makeText(mContext, "Lid opened", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(mContext, "Something got wrong, try again", Toast.LENGTH_SHORT).show();
+        }
+        notifyItemChanged(position);
     }
 
     public static class EvParkingSpotsViewHolder extends RecyclerView.ViewHolder {

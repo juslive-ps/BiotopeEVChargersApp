@@ -29,7 +29,6 @@ import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingSpot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Registration;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.User;
 
-import static android.R.attr.id;
 
 public class EvSpotListActivity extends AppCompatActivity {
 
@@ -58,7 +57,7 @@ public class EvSpotListActivity extends AppCompatActivity {
         parkingLotId = parkingLot.getId();
 
         user = new User();
-        user.setUsername("CurrentUser");
+        user.setUsername("TK");
         user.setPassword("CurrentPassword");
         registration = new Registration();
         registration.addUser(user);
@@ -80,6 +79,7 @@ public class EvSpotListActivity extends AppCompatActivity {
 
         evParkingSpotsAdapter = new EvParkingSpotsAdapter(evParkingSpotsList, this);
         recyclerView.setAdapter(evParkingSpotsAdapter);
+
     }
 
     public User getUser() {
@@ -105,7 +105,7 @@ public class EvSpotListActivity extends AppCompatActivity {
         String username = user.getUsername();
         String isAvailable = "false";
 
-        new ReserveParkingTask().execute(evParkingLotId, evParkingSpotId, username, isAvailable);
+        new ReserveParkingTask(evParkingSpotsAdapter, position).execute(evParkingLotId, evParkingSpotId, username, isAvailable);
     }
 
     public void leaveEvParkingSpot(View view, int position) {
@@ -115,7 +115,11 @@ public class EvSpotListActivity extends AppCompatActivity {
         String username = user.getUsername();
         String isAvailable = "true";
 
-        new ReserveParkingTask().execute(evParkingLotId, evParkingSpotId, username, isAvailable);
+        new ReserveParkingTask(evParkingSpotsAdapter, position).execute(evParkingLotId, evParkingSpotId, username, isAvailable);
+    }
+
+    public void useCharger(int position) {
+        new UseChargerTask(evParkingSpotsAdapter, position).execute();
     }
 
     private String parse(InputStream stream) {
@@ -129,16 +133,17 @@ public class EvSpotListActivity extends AppCompatActivity {
         return responseCode;
     }
 
-
-    private void updateUi(String responseCode) {
-            evParkingSpotsAdapter.setSuccessfull(responseCode);
-
-    }
-
-
     private class ReserveParkingTask extends AsyncTask<String, Object, String> {
         private String response;
         private String responseCode;
+
+        private EvParkingSpotsAdapter evAdapter;
+        private int position;
+
+        public ReserveParkingTask(EvParkingSpotsAdapter evAdapter, int position) {
+            this.evAdapter = evAdapter;
+            this.position = position;
+        }
 
         @Override
         protected String doInBackground(String... params) {
@@ -195,7 +200,63 @@ public class EvSpotListActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String responseCode) {
-            updateUi(responseCode);
+            evAdapter.changeParkingBookState(position, responseCode);
+            //evAdapter.notifyItemChanged(position);
+        }
+
+    }
+
+    private class UseChargerTask extends AsyncTask<Void, Void, String> {
+        private String response;
+        private String responseCode;
+
+        private EvParkingSpotsAdapter evAdapter;
+        private int position;
+
+        public UseChargerTask(EvParkingSpotsAdapter evAdapter, int position) {
+            this.evAdapter = evAdapter;
+            this.position = position;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            Call<String> call = callingApi(getString(R.string.query_use_charger));
+            InputStream stream = null;
+            try {
+                stream = new ByteArrayInputStream(getResponse(call).getBytes("UTF-8"));
+                responseCode = parse(stream);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+
+            }
+            return responseCode;
+        }
+
+        private String getResponse(Call<String> call) {
+            try {
+                String getResponse = call.execute().body();
+                if (getResponse == null) {
+                    Log.e(TAG, "Response is null");
+                } else {
+                    response = getResponse;
+                }
+            } catch (IOException e) {
+                e.getMessage();
+            }
+
+            return response;
+        }
+
+        private Call<String> callingApi(String queryString) {
+            ApiClient.RetrofitService retrofitService = ApiClient.getApi();
+            return retrofitService.getResponse(getString(R.string.query_use_charger));
+        }
+
+
+        @Override
+        protected void onPostExecute(String responseCode) {
+            evAdapter.changeUseChargerState(position, responseCode);
         }
 
     }

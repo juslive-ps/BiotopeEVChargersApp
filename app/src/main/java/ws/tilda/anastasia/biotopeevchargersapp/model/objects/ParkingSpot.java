@@ -8,6 +8,20 @@ public class ParkingSpot implements Parcelable {
     private boolean isAvailable;
     private String user;
     private Charger charger;
+    private boolean isBookedByOurUser;
+
+    public ParkingSpot() {
+
+    }
+
+    public boolean isBookedByOurUser() {
+        return isBookedByOurUser;
+    }
+
+    public void setBookedByOurUser(boolean bookedByOurUser) {
+        isBookedByOurUser = bookedByOurUser;
+    }
+
 
     public Charger getCharger() {
         return charger;
@@ -39,9 +53,6 @@ public class ParkingSpot implements Parcelable {
 
     public void setUser(String user) {
         this.user = user;
-    }
-
-    public ParkingSpot() {
     }
 
     @Override

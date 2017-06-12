@@ -503,6 +503,7 @@ public class XmlParser2 {
                 }
             }
         }
+
         return parkingSpot;
     }
 

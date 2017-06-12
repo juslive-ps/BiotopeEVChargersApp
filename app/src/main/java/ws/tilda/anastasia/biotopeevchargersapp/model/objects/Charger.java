@@ -9,8 +9,17 @@ public class Charger implements Parcelable {
         private String model;
         private String brand;
         private Plug plug;
+        private boolean isLidOpened;
 
-        public String getId() {
+    public boolean isLidOpened() {
+        return isLidOpened;
+    }
+
+    public void setLidOpened(boolean lidOpened) {
+        isLidOpened = lidOpened;
+    }
+
+    public String getId() {
             return id;
         }
 
