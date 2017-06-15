@@ -20,7 +20,7 @@
             android:id="@+id/button2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="openEvSpotListActivity"
+            android:onClick="loadEvParkingSpotsList"
             android:text="@string/choose_an_ev_spot"/>
 
         <include layout="@layout/parking_detail_first_card"/>

@@ -45,70 +45,32 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
         holder.chargingSpeed.setText(plug.getChargingSpeed());
         holder.chargingPower.setText(plug.getPower());
 
-//        if(evParkingSpot.getUser().equals("TK")) {
-//            evParkingSpot.setBookedByOurUser(true);
-//        } else if ((evParkingSpot.getUser().equals("NONE"))) {
-//            evParkingSpot.setBookedByOurUser(false);
-//        } else {
-//            evParkingSpot.setBookedByOurUser(false);
-//        }
-
-
-
-//        if (evParkingSpot.isBookedByOurUser()==true) {
-//            buttonUseParking.setText("Leave Parking");
-//            buttonUseParking.setEnabled(true);
-//            buttonUseCharger.setEnabled(true);
-//        } else if(evParkingSpot.isBookedByOurUser()==false) {
-//            if(evParkingSpot.isAvailable() == true) {
-//                buttonUseParking.setText("Use Parking");
-//                buttonUseParking.setEnabled(true);
-//                buttonUseCharger.setEnabled(false);
-//            } else if (evParkingSpot.isAvailable() == false) {
-//                buttonUseParking.setText("Use Parking");
-//                buttonUseParking.setEnabled(false);
-//                buttonUseCharger.setEnabled(false);
-//            }
-//        }
-
-
-
         if (evParkingSpot.isAvailable() == false) {
             if (evParkingSpot.getUser().equals(((EvSpotListActivity) mContext).getUser().getUsername())) {
                 evParkingSpot.setBookedByOurUser(true);
-                buttonUseParking.setEnabled(true);
-                buttonUseParking.setText("Leave Parking");
-                buttonUseCharger.setEnabled(true);
-                evParkingSpot.getCharger().setLidOpened(false);
             } else {
                 evParkingSpot.setBookedByOurUser(false);
-                buttonUseParking.setEnabled(false);
-                buttonUseParking.setText("Use Parking");
-                evParkingSpot.getCharger().setLidOpened(false);
             }
         } else {
             evParkingSpot.setBookedByOurUser(false);
-            buttonUseParking.setEnabled(true);
-            buttonUseParking.setText("Use Parking");
-            buttonUseCharger.setEnabled(true);
-            evParkingSpot.getCharger().setLidOpened(false);
         }
 
         if (evParkingSpot.isBookedByOurUser() == false) {
-            if(evParkingSpot.isAvailable() == false) {
+            if (evParkingSpot.isAvailable() == false) {
                 buttonUseParking.setEnabled(false);
                 buttonUseParking.setText("Use Parking");
                 buttonUseCharger.setEnabled(false);
-            } else if(evParkingSpot.isAvailable() == true) {
+            } else if (evParkingSpot.isAvailable() == true) {
                 buttonUseParking.setEnabled(true);
                 buttonUseParking.setText("Use Parking");
                 buttonUseCharger.setEnabled(false);
             }
         } else {
+            buttonUseParking.setText("Leave Parking");
+            buttonUseParking.setEnabled(true);
             buttonUseCharger.setEnabled(true);
 
         }
-
 
 
         buttonUseParking.setOnClickListener(new View.OnClickListener() {
@@ -118,22 +80,12 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
                     if (mContext instanceof EvSpotListActivity) {
                         ((EvSpotListActivity) mContext).reserveEvParkingSpot(v, position);
                         if (evParkingSpot.isBookedByOurUser() == true) {
-                            buttonUseParking.setEnabled(true);
-                            buttonUseParking.setText("Leave Parking");
-
-                            buttonUseCharger.setEnabled(true);
-                            evParkingSpot.setUser("TK");
                         }
                     }
                 } else if (evParkingSpot.isBookedByOurUser() == true) {
                     if (mContext instanceof EvSpotListActivity) {
                         ((EvSpotListActivity) mContext).leaveEvParkingSpot(v, position);
                         if (evParkingSpot.isBookedByOurUser() == false) {
-                            buttonUseParking.setEnabled(true);
-                            buttonUseParking.setText("Use Parking");
-
-                            buttonUseCharger.setEnabled(true);
-                            evParkingSpot.setUser("NONE");
                         }
 
                     }
@@ -185,9 +137,11 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
             if (evParkingSpots.get(position).isBookedByOurUser() == true) {
                 evParkingSpots.get(position).setBookedByOurUser(false);
                 evParkingSpots.get(position).setAvailable(true);
+                evParkingSpots.get(position).setUser("NONE");
             } else if (evParkingSpots.get(position).isBookedByOurUser() == false) {
                 evParkingSpots.get(position).setBookedByOurUser(true);
                 evParkingSpots.get(position).setAvailable(false);
+                evParkingSpots.get(position).setUser("TK");
             }
             Toast.makeText(mContext, "Success", Toast.LENGTH_SHORT).show();
         } else {

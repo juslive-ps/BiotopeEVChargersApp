@@ -39,13 +39,11 @@ import retrofit2.Call;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
 import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser2;
 import ws.tilda.anastasia.biotopeevchargersapp.model.networking.ApiClient;
-import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Charger;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.GeoCoordinates;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingLot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingSection;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingService;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingSpot;
-import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Plug;
 
 public class ParkingDetailActivity extends AppCompatActivity {
     public static final String TAG = "ParkingDetailActivity";
@@ -160,7 +158,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
         mSpotsAvailable.setText(String.valueOf(evParkingSection.getNumberOfSpotsAvailable()));
 
         evParkingSpots = (ArrayList<ParkingSpot>) evParkingSection.getParkingSpots();
-}
+    }
 
     private ParkingSection extractEvParkingSection(List<ParkingSection> parkingSections) {
         ParkingSection evParkingSection = null;
@@ -227,9 +225,11 @@ public class ParkingDetailActivity extends AppCompatActivity {
         return parkingService;
     }
 
-    public void openEvSpotListActivity(View view) {
+    public void loadEvParkingSpotsList(View view) {
         new SearchParkingLotsListTask().execute(mParkingLot.getId());
+    }
 
+    public void openEvSpotListActivity(ArrayList<ParkingSpot> evParkingSpots) {
         Intent intent = new Intent(ParkingDetailActivity.this, EvSpotListActivity.class);
         intent.putParcelableArrayListExtra(EXTRA, evParkingSpots);
         intent.putExtra(EXTRA_PARKING_LOT, mParkingLot);
@@ -241,7 +241,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
         private String response;
 
         @Override
-        protected ParkingService doInBackground(String ... params) {
+        protected ParkingService doInBackground(String... params) {
             String parkingLotId = params[0];
 
             Call<String> call = callingApi(parkingLotId);
@@ -291,6 +291,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
                 if (parkingLot.getId().equals(mParkingLot.getId())) {
                     evParkingSpots =
                             (ArrayList) parkingLot.getParkingSectionList().get(0).getParkingSpots();
+                    openEvSpotListActivity(evParkingSpots);
 
                 }
             }
