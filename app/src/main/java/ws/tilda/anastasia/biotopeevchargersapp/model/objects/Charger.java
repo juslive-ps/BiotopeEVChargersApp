@@ -9,14 +9,23 @@ public class Charger implements Parcelable {
         private String model;
         private String brand;
         private Plug plug;
-        private boolean isLidOpened;
+        private boolean isLidOpenedByOurUser;
+        private String lidStatus;
 
-    public boolean isLidOpened() {
-        return isLidOpened;
+    public String getLidStatus() {
+        return lidStatus;
     }
 
-    public void setLidOpened(boolean lidOpened) {
-        isLidOpened = lidOpened;
+    public void setLidStatus(String lidStatus) {
+        this.lidStatus = lidStatus;
+    }
+
+    public boolean isLidOpenedByOurUser() {
+        return isLidOpenedByOurUser;
+    }
+
+    public void setLidOpenedByOurUser(boolean lidOpened) {
+        isLidOpenedByOurUser = lidOpened;
     }
 
     public String getId() {
@@ -51,6 +60,9 @@ public class Charger implements Parcelable {
             this.plug = plug;
         }
 
+    public Charger() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -62,9 +74,8 @@ public class Charger implements Parcelable {
         dest.writeString(this.model);
         dest.writeString(this.brand);
         dest.writeParcelable(this.plug, flags);
-    }
-
-    public Charger() {
+        dest.writeByte(this.isLidOpenedByOurUser ? (byte) 1 : (byte) 0);
+        dest.writeString(this.lidStatus);
     }
 
     protected Charger(Parcel in) {
@@ -72,9 +83,11 @@ public class Charger implements Parcelable {
         this.model = in.readString();
         this.brand = in.readString();
         this.plug = in.readParcelable(Plug.class.getClassLoader());
+        this.isLidOpenedByOurUser = in.readByte() != 0;
+        this.lidStatus = in.readString();
     }
 
-    public static final Parcelable.Creator<Charger> CREATOR = new Parcelable.Creator<Charger>() {
+    public static final Creator<Charger> CREATOR = new Creator<Charger>() {
         @Override
         public Charger createFromParcel(Parcel source) {
             return new Charger(source);

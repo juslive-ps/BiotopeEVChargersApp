@@ -118,8 +118,24 @@ public class EvSpotListActivity extends AppCompatActivity {
         new ReserveParkingTask(evParkingSpotsAdapter, position).execute(evParkingLotId, evParkingSpotId, username, isAvailable);
     }
 
-    public void useCharger(int position) {
-        new UseChargerTask(evParkingSpotsAdapter, position).execute();
+    public void openChargerLid(View v, int position) {
+        ParkingSpot evParkingspot = evParkingSpotsList.get(position);
+        String evParkingLotId = parkingLot.getId();
+        String evParkingSpotId = evParkingspot.getId();
+        String username = user.getUsername();
+        String lidStatus = "Open";
+
+        new UseChargerTask(evParkingSpotsAdapter, position).execute(evParkingLotId, evParkingSpotId, username, lidStatus);
+    }
+
+    public void lockChargerLid(View v, int position) {
+        ParkingSpot evParkingspot = evParkingSpotsList.get(position);
+        String evParkingLotId = parkingLot.getId();
+        String evParkingSpotId = evParkingspot.getId();
+        String username = user.getUsername();
+        String lidStatus = "Locked";
+
+        new UseChargerTask(evParkingSpotsAdapter, position).execute(evParkingLotId, evParkingSpotId, username, lidStatus);
     }
 
     private String parse(InputStream stream) {
@@ -201,12 +217,11 @@ public class EvSpotListActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String responseCode) {
             evAdapter.changeParkingBookState(position, responseCode);
-            //evAdapter.notifyItemChanged(position);
         }
 
     }
 
-    private class UseChargerTask extends AsyncTask<Void, Void, String> {
+    private class UseChargerTask extends AsyncTask<String, Object, String> {
         private String response;
         private String responseCode;
 
@@ -219,9 +234,16 @@ public class EvSpotListActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected String doInBackground(String... params) {
 
-            Call<String> call = callingApi(getString(R.string.query_use_charger));
+            String evParkingLotId = params[0];
+            String evParkingSpotId = params[1];
+            String username = params[2];
+            String lidStatus = params[3];
+
+            String bookingQuery = getBookingQueryString(evParkingLotId, evParkingSpotId, username, lidStatus);
+
+            Call<String> call = callingApi(bookingQuery);
             InputStream stream = null;
             try {
                 stream = new ByteArrayInputStream(getResponse(call).getBytes("UTF-8"));
@@ -250,7 +272,17 @@ public class EvSpotListActivity extends AppCompatActivity {
 
         private Call<String> callingApi(String queryString) {
             ApiClient.RetrofitService retrofitService = ApiClient.getApi();
-            return retrofitService.getResponse(getString(R.string.query_use_charger));
+            return retrofitService.getResponse(queryString);
+        }
+
+        private String getBookingQueryString(String evParkingLotId, String enParkingSpotId, String username, String lidStatus) {
+
+            return String.format(Locale.US,
+                    getString(R.string.query_use_charger),
+                    evParkingLotId,
+                    enParkingSpotId,
+                    username,
+                    lidStatus);
         }
 
 

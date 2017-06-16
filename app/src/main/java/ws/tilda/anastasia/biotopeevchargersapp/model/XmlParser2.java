@@ -401,17 +401,20 @@ public class XmlParser2 {
                     } else if (element.getAttribute("name").equals("Brand")) {
                         String brand = getValue("value", element);
                         charger.setBrand(brand);
+                    } else if (element.getAttribute("name").equals("LidStatus")) {
+                        String lidStatus = getValue("value", element);
+                        charger.setLidStatus(lidStatus);
                     }
                 } else if (element.getTagName().equals("Object")) {
-                    if (element.getAttribute("type").equals("mv:Plug")) {
-                        Plug plug = parsePlug(element);
-                        charger.setPlug(plug);
+                        if (element.getAttribute("type").equals("mv:Plug")) {
+                            Plug plug = parsePlug(element);
+                            charger.setPlug(plug);
+                        }
                     }
                 }
             }
-        }
         return charger;
-    }
+        }
 
     private Plug parsePlug(Element nodeElement) {
         Plug plug = new Plug();

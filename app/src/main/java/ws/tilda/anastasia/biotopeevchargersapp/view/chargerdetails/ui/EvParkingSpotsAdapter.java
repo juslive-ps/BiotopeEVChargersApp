@@ -12,6 +12,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import ws.tilda.anastasia.biotopeevchargersapp.R;
+import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Charger;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingSpot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Plug;
 
@@ -44,8 +45,9 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
         holder.plugType.setText(plug.getPlugType());
         holder.chargingSpeed.setText(plug.getChargingSpeed());
         holder.chargingPower.setText(plug.getPower());
+        Charger charger = evParkingSpot.getCharger();
 
-        if (evParkingSpot.isAvailable() == false) {
+        if (!evParkingSpot.isAvailable()) {
             if (evParkingSpot.getUser().equals(((EvSpotListActivity) mContext).getUser().getUsername())) {
                 evParkingSpot.setBookedByOurUser(true);
             } else {
@@ -55,12 +57,12 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
             evParkingSpot.setBookedByOurUser(false);
         }
 
-        if (evParkingSpot.isBookedByOurUser() == false) {
-            if (evParkingSpot.isAvailable() == false) {
+        if (!evParkingSpot.isBookedByOurUser()) {
+            if (!evParkingSpot.isAvailable()) {
                 buttonUseParking.setEnabled(false);
                 buttonUseParking.setText("Use Parking");
                 buttonUseCharger.setEnabled(false);
-            } else if (evParkingSpot.isAvailable() == true) {
+            } else if (evParkingSpot.isAvailable()) {
                 buttonUseParking.setEnabled(true);
                 buttonUseParking.setText("Use Parking");
                 buttonUseCharger.setEnabled(false);
@@ -69,25 +71,33 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
             buttonUseParking.setText("Leave Parking");
             buttonUseParking.setEnabled(true);
             buttonUseCharger.setEnabled(true);
+        }
 
+        if (evParkingSpot.isBookedByOurUser()) {
+            if (charger.getLidStatus().equals("Locked")) {
+                charger.setLidOpenedByOurUser(false);
+            } else if (charger.getLidStatus().equals("Open")) {
+                charger.setLidOpenedByOurUser(true);
+            }
+        }
+
+        if (!evParkingSpot.getCharger().isLidOpenedByOurUser()) {
+            buttonUseCharger.setText("Open the lid");
+        } else {
+            buttonUseCharger.setText("Close the lid");
         }
 
 
         buttonUseParking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (evParkingSpot.isBookedByOurUser() == false) {
+                if (!evParkingSpot.isBookedByOurUser()) {
                     if (mContext instanceof EvSpotListActivity) {
                         ((EvSpotListActivity) mContext).reserveEvParkingSpot(v, position);
-                        if (evParkingSpot.isBookedByOurUser() == true) {
-                        }
                     }
-                } else if (evParkingSpot.isBookedByOurUser() == true) {
+                } else if (evParkingSpot.isBookedByOurUser()) {
                     if (mContext instanceof EvSpotListActivity) {
                         ((EvSpotListActivity) mContext).leaveEvParkingSpot(v, position);
-                        if (evParkingSpot.isBookedByOurUser() == false) {
-                        }
-
                     }
 
                 }
@@ -95,34 +105,21 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
             }
         });
 
-//        buttonUseCharger.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (evParkingSpot.getCharger().isLidOpened() == false) {
-//                    if (mContext instanceof EvSpotListActivity) {
-//                        ((EvSpotListActivity) mContext).useCharger(position);
-//                        if (evParkingSpot.getCharger().isLidOpened() == true)
-//
-//                            buttonUseCharger.setText("Close charger");
-//
-//                    }
-//                }
-//                } else if (evParkingSpot.isBookedByOurUser() == true) {
-//                    if (mContext instanceof EvSpotListActivity) {
-//                        ((EvSpotListActivity) mContext).leaveEvParkingSpot(v, position);
-//                        if (evParkingSpot.isBookedByOurUser() == false) {
-//                            buttonUseParking.setEnabled(true);
-//                            buttonUseParking.setText("Use Parking");
-//
-//                            buttonUseCharger.setEnabled(true);
-//                            evParkingSpot.setUser("NONE");
-//                        }
-//                    }
-//
-//                }
+        buttonUseCharger.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!evParkingSpot.getCharger().isLidOpenedByOurUser()) {
+                    if (mContext instanceof EvSpotListActivity) {
+                        ((EvSpotListActivity) mContext).openChargerLid(v, position);
+                    }
+                } else if (evParkingSpot.getCharger().isLidOpenedByOurUser()) {
+                    if (mContext instanceof EvSpotListActivity) {
+                        ((EvSpotListActivity) mContext).lockChargerLid(v, position);
+                    }
+                }
 
-//            }
-//        });
+            }
+        });
 
     }
 
@@ -134,16 +131,17 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
 
     public void changeParkingBookState(int position, String responseCode) {
         if (responseCode.equals("200")) {
-            if (evParkingSpots.get(position).isBookedByOurUser() == true) {
+            if (evParkingSpots.get(position).isBookedByOurUser()) {
                 evParkingSpots.get(position).setBookedByOurUser(false);
                 evParkingSpots.get(position).setAvailable(true);
                 evParkingSpots.get(position).setUser("NONE");
-            } else if (evParkingSpots.get(position).isBookedByOurUser() == false) {
+                Toast.makeText(mContext, "Successfully left the parking", Toast.LENGTH_SHORT).show();
+            } else if (!evParkingSpots.get(position).isBookedByOurUser()) {
                 evParkingSpots.get(position).setBookedByOurUser(true);
                 evParkingSpots.get(position).setAvailable(false);
                 evParkingSpots.get(position).setUser("TK");
+                Toast.makeText(mContext, "Successfully booked the parking", Toast.LENGTH_SHORT).show();
             }
-            Toast.makeText(mContext, "Success", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(mContext, "Something got wrong, try again", Toast.LENGTH_SHORT).show();
         }
@@ -152,8 +150,16 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
 
     public void changeUseChargerState(int position, String responseCode) {
         if (responseCode.equals("200")) {
-            evParkingSpots.get(position).getCharger().setLidOpened(true);
-            Toast.makeText(mContext, "Lid opened", Toast.LENGTH_SHORT).show();
+            if (evParkingSpots.get(position).getCharger().isLidOpenedByOurUser()) {
+                evParkingSpots.get(position).getCharger().setLidOpenedByOurUser(false);
+                evParkingSpots.get(position).getCharger().setLidStatus("Locked");
+                Toast.makeText(mContext, "Lid locked", Toast.LENGTH_SHORT).show();
+            } else if (!evParkingSpots.get(position).getCharger().isLidOpenedByOurUser()) {
+                evParkingSpots.get(position).getCharger().setLidOpenedByOurUser(true);
+                evParkingSpots.get(position).getCharger().setLidStatus("Open");
+                Toast.makeText(mContext, "Lid opened, you can use the charger",
+                        Toast.LENGTH_SHORT).show();
+            }
         } else {
             Toast.makeText(mContext, "Something got wrong, try again", Toast.LENGTH_SHORT).show();
         }
