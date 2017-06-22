@@ -165,6 +165,13 @@
                 android:id="@+id/button_use_charger"
                 android:text="@string/use_charger"/>
 
+            <Button
+                android:id="@+id/button_routing"
+                android:layout_width="60dp"
+                android:layout_height="48dp"
+                android:drawableLeft="@android:drawable/ic_menu_directions"
+                />
+
         </LinearLayout>
 
 

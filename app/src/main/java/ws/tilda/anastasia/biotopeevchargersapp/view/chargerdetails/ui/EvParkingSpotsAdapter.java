@@ -1,6 +1,8 @@
 package ws.tilda.anastasia.biotopeevchargersapp.view.chargerdetails.ui;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Locale;
 
 import ws.tilda.anastasia.biotopeevchargersapp.R;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Charger;
+import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingLot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingSpot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Plug;
 
@@ -20,23 +24,28 @@ import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Plug;
 public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAdapter.EvParkingSpotsViewHolder> {
     private List<ParkingSpot> evParkingSpots;
     private Context mContext;
+    private ParkingLot mParkingLot;
 
-    public EvParkingSpotsAdapter(List<ParkingSpot> evParkingSpots, Context context) {
+    public EvParkingSpotsAdapter(List<ParkingSpot> evParkingSpots, Context context, ParkingLot parkingLot) {
         this.evParkingSpots = evParkingSpots;
         this.mContext = context;
-
+        this.mParkingLot = parkingLot;
     }
 
     @Override
-    public EvParkingSpotsAdapter.EvParkingSpotsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_ev_spot, parent, false);
+    public EvParkingSpotsAdapter.EvParkingSpotsViewHolder onCreateViewHolder(ViewGroup parent,
+                                                                             int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_ev_spot,
+                parent, false);
         return new EvParkingSpotsViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final EvParkingSpotsAdapter.EvParkingSpotsViewHolder holder, final int position) {
+    public void onBindViewHolder(final EvParkingSpotsAdapter.EvParkingSpotsViewHolder holder,
+                                 final int position) {
         final Button buttonUseParking = holder.buttonUseParking;
         final Button buttonUseCharger = holder.buttonUseCharger;
+        final Button buttonRouting = holder.buttonRouting;
 
         final ParkingSpot evParkingSpot = evParkingSpots.get(position);
         Plug plug = evParkingSpot.getCharger().getPlug();
@@ -81,11 +90,12 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
             }
         }
 
-        if (!evParkingSpot.getCharger().isLidOpenedByOurUser()) {
-            buttonUseCharger.setText("Open the lid");
-        } else {
-            buttonUseCharger.setText("Close the lid");
-        }
+//        if (!evParkingSpot.getCharger().isLidOpenedByOurUser()) {
+//            buttonUseCharger.setText("Use charger");
+//        } else {
+//            buttonUseCharger.setText("Leave charger");
+//
+//        }
 
 
         buttonUseParking.setOnClickListener(new View.OnClickListener() {
@@ -114,9 +124,21 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
                     }
                 } else if (evParkingSpot.getCharger().isLidOpenedByOurUser()) {
                     if (mContext instanceof EvSpotListActivity) {
-                        ((EvSpotListActivity) mContext).lockChargerLid(v, position);
+                        //((EvSpotListActivity) mContext).lockChargerLid(v, position); Charger locks by itself
+                        ((EvSpotListActivity) mContext).openChargerLid(v, position);
                     }
                 }
+
+            }
+        });
+
+        buttonRouting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                        Uri.parse(getRoutingUrlString(mParkingLot.getPosition().getLatitude(),
+                                mParkingLot.getPosition().getLongitude())));
+                mContext.startActivity(intent);
 
             }
         });
@@ -152,8 +174,10 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
         if (responseCode.equals("200")) {
             if (evParkingSpots.get(position).getCharger().isLidOpenedByOurUser()) {
                 evParkingSpots.get(position).getCharger().setLidOpenedByOurUser(false);
-                evParkingSpots.get(position).getCharger().setLidStatus("Locked");
-                Toast.makeText(mContext, "Lid locked", Toast.LENGTH_SHORT).show();
+//                evParkingSpots.get(position).getCharger().setLidStatus("Locked");
+//                Toast.makeText(mContext, "Lid locked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Lid opened, you can use the charger",
+                        Toast.LENGTH_SHORT).show();
             } else if (!evParkingSpots.get(position).getCharger().isLidOpenedByOurUser()) {
                 evParkingSpots.get(position).getCharger().setLidOpenedByOurUser(true);
                 evParkingSpots.get(position).getCharger().setLidStatus("Open");
@@ -161,9 +185,17 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
                         Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(mContext, "Something got wrong, try again", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "You are trying to open a charger that is already in use",
+                    Toast.LENGTH_SHORT).show();
         }
         notifyItemChanged(position);
+    }
+
+    private String getRoutingUrlString(double latitude, double longitude) {
+
+        return String.format(Locale.US, mContext.getString(R.string.url_maps_routing),
+                latitude,
+                longitude);
     }
 
     public static class EvParkingSpotsViewHolder extends RecyclerView.ViewHolder {
@@ -174,6 +206,7 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
         TextView chargingPower;
         Button buttonUseParking;
         Button buttonUseCharger;
+        Button buttonRouting;
 
 
         public EvParkingSpotsViewHolder(View itemView) {
@@ -185,6 +218,7 @@ public class EvParkingSpotsAdapter extends RecyclerView.Adapter<EvParkingSpotsAd
             chargingPower = (TextView) itemView.findViewById(R.id.charging_power);
             buttonUseParking = (Button) itemView.findViewById(R.id.button_use_parking);
             buttonUseCharger = (Button) itemView.findViewById(R.id.button_use_charger);
+            buttonRouting = (Button) itemView.findViewById(R.id.button_routing);
         }
     }
 

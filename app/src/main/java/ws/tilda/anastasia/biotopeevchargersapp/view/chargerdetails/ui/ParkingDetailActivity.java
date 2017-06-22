@@ -175,7 +175,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
     private void setZoom(ParkingLot parkingLot) {
         LatLng latLng = getParkingLotLatLng(parkingLot);
 
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,15);
         mMap.moveCamera(cameraUpdate);
     }
 

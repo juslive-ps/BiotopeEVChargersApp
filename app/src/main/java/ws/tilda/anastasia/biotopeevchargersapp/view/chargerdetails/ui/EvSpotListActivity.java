@@ -47,6 +47,10 @@ public class EvSpotListActivity extends AppCompatActivity {
     private EvParkingSpotsAdapter evParkingSpotsAdapter;
     private String parkingLotId;
 
+    static double parkingLotLat;
+    static double parkingLotLon;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +59,8 @@ public class EvSpotListActivity extends AppCompatActivity {
         evParkingSpotsList = getIntent().getParcelableArrayListExtra(EXTRA);
         parkingLot = getIntent().getParcelableExtra(EXTRA_PARKING_LOT);
         parkingLotId = parkingLot.getId();
+        parkingLotLat = parkingLot.getPosition().getLatitude();
+        parkingLotLon = parkingLot.getPosition().getLongitude();
 
         user = new User();
         user.setUsername("TK");
@@ -77,7 +83,7 @@ public class EvSpotListActivity extends AppCompatActivity {
 
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.activity_ev_spot_list);
 
-        evParkingSpotsAdapter = new EvParkingSpotsAdapter(evParkingSpotsList, this);
+        evParkingSpotsAdapter = new EvParkingSpotsAdapter(evParkingSpotsList, this, parkingLot);
         recyclerView.setAdapter(evParkingSpotsAdapter);
 
     }
