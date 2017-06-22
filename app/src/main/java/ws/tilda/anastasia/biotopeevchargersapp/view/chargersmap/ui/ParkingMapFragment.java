@@ -272,10 +272,12 @@ public class ParkingMapFragment extends SupportMapFragment {
         List<ParkingLot> parkingLots = ps.getParkingLots();
         for (ParkingLot parkingLot : parkingLots) {
             GeoCoordinates position = parkingLot.getPosition();
+            int numberOfSpotsAvailable = parkingLot.getParkingSectionList().get(0).getNumberOfSpotsAvailable();
 
             LatLng itemPoint = new LatLng(position.getLatitude(), position.getLongitude());
 
-            Marker itemMarker = addMarkerToMap(itemPoint, BitmapDescriptorFactory.HUE_GREEN);
+
+            Marker itemMarker = addMarkerToMap(itemPoint, getMarkerColor(numberOfSpotsAvailable));
 
             String snippetTitle = getResources().getString(R.string.map_parking_snippet_title,
                     parkingLot.getId());
@@ -288,6 +290,13 @@ public class ParkingMapFragment extends SupportMapFragment {
 
             boundsBuilder.include(itemPoint);
         }
+    }
+
+    private float getMarkerColor(int numberOfSpotsAvailable){
+        if(numberOfSpotsAvailable == 0) {
+            return BitmapDescriptorFactory.HUE_RED;
+        }
+        return BitmapDescriptorFactory.HUE_GREEN;
     }
 
     private Marker addMarkerToMap(LatLng itemPoint, float colorMask) {

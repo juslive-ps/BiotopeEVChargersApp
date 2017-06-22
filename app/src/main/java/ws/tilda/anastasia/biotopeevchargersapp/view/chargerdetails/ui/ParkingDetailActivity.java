@@ -182,10 +182,18 @@ public class ParkingDetailActivity extends AppCompatActivity {
     @NonNull
     private void addMarkerToMapView(ParkingLot parkingLot) {
         LatLng latLng = getParkingLotLatLng(parkingLot);
+        int numberOfSpotsAvailable = parkingLot.getParkingSectionList().get(0).getNumberOfSpotsAvailable();
 
         MarkerOptions itemMarker = new MarkerOptions().position(latLng);
-        itemMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        itemMarker.icon(BitmapDescriptorFactory.defaultMarker(getMarkerColor(numberOfSpotsAvailable)));
         mMap.addMarker(itemMarker);
+    }
+
+    private float getMarkerColor(int numberOfSpotsAvailable){
+        if(numberOfSpotsAvailable == 0) {
+            return BitmapDescriptorFactory.HUE_RED;
+        }
+        return BitmapDescriptorFactory.HUE_GREEN;
     }
 
     @NonNull
