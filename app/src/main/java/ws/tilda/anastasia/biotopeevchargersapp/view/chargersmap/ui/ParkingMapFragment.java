@@ -41,7 +41,7 @@ import java.util.Locale;
 import retrofit2.Call;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
 //import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser;
-import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser2;
+import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser;
 import ws.tilda.anastasia.biotopeevchargersapp.model.networking.ApiClient;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.GeoCoordinates;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingLot;
@@ -65,7 +65,7 @@ public class ParkingMapFragment extends SupportMapFragment {
     private GoogleApiClient mClient;
     private GoogleMap mMap;
 
-    private XmlParser2 xmlParser;
+    private XmlParser xmlParser;
 
 
     public static ParkingMapFragment newInstance() {
@@ -77,7 +77,7 @@ public class ParkingMapFragment extends SupportMapFragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        xmlParser = new XmlParser2();
+        xmlParser = new XmlParser();
 
         mClient = getGoogleApiClient();
 
@@ -333,14 +333,6 @@ public class ParkingMapFragment extends SupportMapFragment {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-
-
-//            try {
-////                stream = getActivity().getAssets().open("xmlFile2.xml");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-
 
             return parkingService;
         }

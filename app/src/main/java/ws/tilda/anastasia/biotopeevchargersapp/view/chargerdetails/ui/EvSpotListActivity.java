@@ -22,7 +22,7 @@ import java.util.Locale;
 
 import retrofit2.Call;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
-import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser2;
+import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser;
 import ws.tilda.anastasia.biotopeevchargersapp.model.networking.ApiClient;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingLot;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingSpot;
@@ -43,7 +43,7 @@ public class EvSpotListActivity extends AppCompatActivity {
     private Registration registration;
     private User user;
     private List<User> users;
-    private XmlParser2 parser;
+    private XmlParser parser;
     private EvParkingSpotsAdapter evParkingSpotsAdapter;
     private String parkingLotId;
 
@@ -68,7 +68,7 @@ public class EvSpotListActivity extends AppCompatActivity {
         registration = new Registration();
         registration.addUser(user);
         users = registration.getUsers();
-        parser = new XmlParser2();
+        parser = new XmlParser();
 
 
         ActionBar actionBar = getSupportActionBar();

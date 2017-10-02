@@ -37,7 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
-import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser2;
+import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser;
 import ws.tilda.anastasia.biotopeevchargersapp.model.networking.ApiClient;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.GeoCoordinates;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.ParkingLot;
@@ -77,7 +77,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
     @BindView(R.id.spots_available)
     TextView mSpotsAvailable;
 
-    private XmlParser2 parser;
+    private XmlParser parser;
 
 
     @Override
@@ -86,7 +86,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_parking_detail);
         ButterKnife.bind(this);
 
-        parser = new XmlParser2();
+        parser = new XmlParser();
 
 
         mContext = this;
