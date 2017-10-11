@@ -68,10 +68,6 @@ public class ParkingMapFragment extends SupportMapFragment {
     private XmlParser xmlParser;
 
 
-    public static ParkingMapFragment newInstance() {
-        return new ParkingMapFragment();
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,42 +96,42 @@ public class ParkingMapFragment extends SupportMapFragment {
         mClient.disconnect();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.fragment_charger_map, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.action_locate);
-        searchItem.setEnabled(mClient.isConnected());
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_locate:
-                if (hasLocationPermission()) {
-                    findEvParkingLotByCurrentLocation();
-                } else {
-                    requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_LOCATION_PERMISSIONS:
-                if (hasLocationPermission()) {
-                    findEvParkingLotByCurrentLocation();
-                }
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        super.onCreateOptionsMenu(menu, inflater);
+//        inflater.inflate(R.menu.fragment_charger_map, menu);
+//
+//        MenuItem searchItem = menu.findItem(R.id.action_locate);
+//        searchItem.setEnabled(mClient.isConnected());
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.action_locate:
+//                if (hasLocationPermission()) {
+//                    findEvParkingLotByCurrentLocation();
+//                } else {
+//                    requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
+//                }
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+//                                           @NonNull int[] grantResults) {
+//        switch (requestCode) {
+//            case REQUEST_LOCATION_PERMISSIONS:
+//                if (hasLocationPermission()) {
+//                    findEvParkingLotByCurrentLocation();
+//                }
+//            default:
+//                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        }
+//    }
 
     private void getMapAsync() {
         getMapAsync(new OnMapReadyCallback() {
@@ -194,41 +190,41 @@ public class ParkingMapFragment extends SupportMapFragment {
     }
 
 
-    private void findEvParkingLotByCurrentLocation() {
-        LocationRequest request = LocationRequest.create();
-        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        request.setNumUpdates(1);
-        request.setInterval(0);
+//    private void findEvParkingLotByCurrentLocation() {
+//        LocationRequest request = LocationRequest.create();
+//        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+//        request.setNumUpdates(1);
+//        request.setInterval(0);
+//
+//        requestLocationUpdate(request);
+//    }
 
-        requestLocationUpdate(request);
-    }
-
-    private void requestLocationUpdate(LocationRequest request) {
-        // Checking permissions, necessary to request location update
-        if (ActivityCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
-        LocationServices.FusedLocationApi
-                .requestLocationUpdates(mClient, request, new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        Log.i(TAG, "Got a fix: " + location);
-                        new SearchParkingTask().execute(location);
-                    }
-                });
-    }
+//    private void requestLocationUpdate(LocationRequest request) {
+//        // Checking permissions, necessary to request location update
+//        if (ActivityCompat.checkSelfPermission(getActivity(),
+//                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+//                && ActivityCompat.checkSelfPermission(getActivity(),
+//                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            return;
+//        }
+//
+//        LocationServices.FusedLocationApi
+//                .requestLocationUpdates(mClient, request, new LocationListener() {
+//                    @Override
+//                    public void onLocationChanged(Location location) {
+//                        Log.i(TAG, "Got a fix: " + location);
+//                        new SearchParkingTask().execute(location);
+//                    }
+//                });
+//    }
 
     public void findEvParkingLotBySearchAutocomplete(Location location) {
         new SearchParkingTask().execute(location);
     }
 
-    private void findEvParkingLot(Location location) {
-        new SearchParkingTask().execute(location);
-    }
+//    private void findEvParkingLot(Location location) {
+//        new SearchParkingTask().execute(location);
+//    }
 
     private boolean hasLocationPermission() {
         int result = ContextCompat.checkSelfPermission(getActivity(), LOCATION_PERMISSIONS[0]);
