@@ -25,7 +25,6 @@
         </activity>
 
         <activity android:name=".view.chargerdetails.ui.EvSpotListActivity"/>
-        <!--<activity android:name=".view.chargerdetails.ui.ParkingDetailActivity"/>-->
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -42,6 +41,11 @@
         <activity android:name=".view.chargerdetails.ui.ParkingDetailActivity"
                   android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".view.authentication.EmailPasswordActivity"
+                  android:screenOrientation="portrait"
+                  android:noHistory="true">
+        </activity>
+
     </application>
 
 </manifest>

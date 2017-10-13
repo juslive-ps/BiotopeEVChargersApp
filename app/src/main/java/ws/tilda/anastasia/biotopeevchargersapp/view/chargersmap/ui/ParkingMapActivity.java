@@ -2,6 +2,7 @@ package ws.tilda.anastasia.biotopeevchargersapp.view.chargersmap.ui;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -17,14 +18,19 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 import ws.tilda.anastasia.biotopeevchargersapp.R;
+import ws.tilda.anastasia.biotopeevchargersapp.view.authentication.EmailPasswordActivity;
 
 public class ParkingMapActivity extends AppCompatActivity {
     public static final int REQUEST_ERROR = 0;
     private static final String TAG = "ParkingMapActivity";
 
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
 
     @LayoutRes
@@ -38,6 +44,24 @@ public class ParkingMapActivity extends AppCompatActivity {
         setContentView(getLayoutResId());
         getSupportActionBar().hide();
 
+        //Checking if the user is authenticated
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                    Intent intent = new Intent(getBaseContext(), EmailPasswordActivity.class);
+                    startActivity(intent);
+
+                }
+            }
+        };
 
 
         SupportPlaceAutocompleteFragment autocompleteFragment = (SupportPlaceAutocompleteFragment)
@@ -63,6 +87,19 @@ public class ParkingMapActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
 
     @Override
     protected void onResume() {

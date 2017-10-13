@@ -40,7 +40,6 @@ import java.util.Locale;
 
 import retrofit2.Call;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
-//import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser;
 import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser;
 import ws.tilda.anastasia.biotopeevchargersapp.model.networking.ApiClient;
 import ws.tilda.anastasia.biotopeevchargersapp.model.objects.GeoCoordinates;
@@ -170,9 +169,12 @@ public class ParkingMapFragment extends SupportMapFragment {
                     @Override
                     public void onConnected(@Nullable Bundle bundle) {
                         getActivity().invalidateOptionsMenu();
+                        if (hasLocationPermission()) {
+                    findEvParkingLotByCurrentLocation();
+                } else {
+                    requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
+                }
 
-//                  Only if we want to find nearest parking according current location
-//                        findEvParkingLotByCurrentLocation();
                     }
 
                     @Override
@@ -190,41 +192,37 @@ public class ParkingMapFragment extends SupportMapFragment {
     }
 
 
-//    private void findEvParkingLotByCurrentLocation() {
-//        LocationRequest request = LocationRequest.create();
-//        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//        request.setNumUpdates(1);
-//        request.setInterval(0);
-//
-//        requestLocationUpdate(request);
-//    }
+    private void findEvParkingLotByCurrentLocation() {
+        LocationRequest request = LocationRequest.create();
+        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        request.setNumUpdates(1);
+        request.setInterval(0);
 
-//    private void requestLocationUpdate(LocationRequest request) {
-//        // Checking permissions, necessary to request location update
-//        if (ActivityCompat.checkSelfPermission(getActivity(),
-//                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-//                && ActivityCompat.checkSelfPermission(getActivity(),
-//                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            return;
-//        }
-//
-//        LocationServices.FusedLocationApi
-//                .requestLocationUpdates(mClient, request, new LocationListener() {
-//                    @Override
-//                    public void onLocationChanged(Location location) {
-//                        Log.i(TAG, "Got a fix: " + location);
-//                        new SearchParkingTask().execute(location);
-//                    }
-//                });
-//    }
+        requestLocationUpdate(request);
+    }
+
+    private void requestLocationUpdate(LocationRequest request) {
+        // Checking permissions, necessary to request location update
+        if (ActivityCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        LocationServices.FusedLocationApi
+                .requestLocationUpdates(mClient, request, new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        Log.i(TAG, "Got a fix: " + location);
+                        new SearchParkingTask().execute(location);
+                    }
+                });
+    }
 
     public void findEvParkingLotBySearchAutocomplete(Location location) {
         new SearchParkingTask().execute(location);
     }
-
-//    private void findEvParkingLot(Location location) {
-//        new SearchParkingTask().execute(location);
-//    }
 
     private boolean hasLocationPermission() {
         int result = ContextCompat.checkSelfPermission(getActivity(), LOCATION_PERMISSIONS[0]);
