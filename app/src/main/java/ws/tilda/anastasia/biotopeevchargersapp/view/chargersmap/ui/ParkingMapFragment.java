@@ -170,10 +170,10 @@ public class ParkingMapFragment extends SupportMapFragment {
                     public void onConnected(@Nullable Bundle bundle) {
                         getActivity().invalidateOptionsMenu();
                         if (hasLocationPermission()) {
-                    findEvParkingLotByCurrentLocation();
-                } else {
-                    requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
-                }
+                            findEvParkingLotByCurrentLocation();
+                        } else {
+                            requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
+                        }
 
                     }
 
@@ -286,8 +286,8 @@ public class ParkingMapFragment extends SupportMapFragment {
         }
     }
 
-    private float getMarkerColor(int numberOfSpotsAvailable){
-        if(numberOfSpotsAvailable == 0) {
+    private float getMarkerColor(int numberOfSpotsAvailable) {
+        if (numberOfSpotsAvailable == 0) {
             return BitmapDescriptorFactory.HUE_RED;
         }
         return BitmapDescriptorFactory.HUE_GREEN;
