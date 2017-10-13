@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -16,11 +18,13 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+
 import ws.tilda.anastasia.biotopeevchargersapp.R;
 
 public class ParkingMapActivity extends AppCompatActivity {
     public static final int REQUEST_ERROR = 0;
     private static final String TAG = "ParkingMapActivity";
+
 
 
     @LayoutRes
@@ -33,6 +37,7 @@ public class ParkingMapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResId());
         getSupportActionBar().hide();
+
 
 
         SupportPlaceAutocompleteFragment autocompleteFragment = (SupportPlaceAutocompleteFragment)
@@ -58,6 +63,7 @@ public class ParkingMapActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -78,6 +84,9 @@ public class ParkingMapActivity extends AppCompatActivity {
             errorDialog.show();
         }
     }
+
+
+
 
     public void onFragmentInteraction(double latitude, double longitude ) {
         ParkingMapFragment parkingMapFragment = (ParkingMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,6 +48,10 @@ public class EvSpotListActivity extends AppCompatActivity {
     private EvParkingSpotsAdapter evParkingSpotsAdapter;
     private String parkingLotId;
 
+
+
+
+
     static double parkingLotLat;
     static double parkingLotLon;
 
@@ -62,13 +67,17 @@ public class EvSpotListActivity extends AppCompatActivity {
         parkingLotLat = parkingLot.getPosition().getLatitude();
         parkingLotLon = parkingLot.getPosition().getLongitude();
 
+        parser = new XmlParser();
+
+
+
         user = new User();
         user.setUsername("TK");
         user.setPassword("CurrentPassword");
         registration = new Registration();
         registration.addUser(user);
         users = registration.getUsers();
-        parser = new XmlParser();
+
 
 
         ActionBar actionBar = getSupportActionBar();
@@ -87,6 +96,7 @@ public class EvSpotListActivity extends AppCompatActivity {
         recyclerView.setAdapter(evParkingSpotsAdapter);
 
     }
+
 
     public User getUser() {
         return user;
@@ -109,6 +119,7 @@ public class EvSpotListActivity extends AppCompatActivity {
         String evParkingLotId = parkingLot.getId();
         String evParkingSpotId = evParkingspot.getId();
         String username = user.getUsername();
+
         String isAvailable = "false";
 
         new ReserveParkingTask(evParkingSpotsAdapter, position).execute(evParkingLotId, evParkingSpotId, username, isAvailable);
@@ -129,20 +140,21 @@ public class EvSpotListActivity extends AppCompatActivity {
         String evParkingLotId = parkingLot.getId();
         String evParkingSpotId = evParkingspot.getId();
         String username = user.getUsername();
+
         String lidStatus = "Open";
 
         new UseChargerTask(evParkingSpotsAdapter, position).execute(evParkingLotId, evParkingSpotId, username, lidStatus);
     }
 
-    public void lockChargerLid(View v, int position) {
-        ParkingSpot evParkingspot = evParkingSpotsList.get(position);
-        String evParkingLotId = parkingLot.getId();
-        String evParkingSpotId = evParkingspot.getId();
-        String username = user.getUsername();
-        String lidStatus = "Locked";
-
-        new UseChargerTask(evParkingSpotsAdapter, position).execute(evParkingLotId, evParkingSpotId, username, lidStatus);
-    }
+//    public void lockChargerLid(View v, int position) {
+//        ParkingSpot evParkingspot = evParkingSpotsList.get(position);
+//        String evParkingLotId = parkingLot.getId();
+//        String evParkingSpotId = evParkingspot.getId();
+//        String username = user.getUsername();
+//        String lidStatus = "Locked";
+//
+//        new UseChargerTask(evParkingSpotsAdapter, position).execute(evParkingLotId, evParkingSpotId, username, lidStatus);
+//    }
 
     private String parse(InputStream stream) {
         String responseCode = "";
@@ -226,6 +238,7 @@ public class EvSpotListActivity extends AppCompatActivity {
         }
 
     }
+
 
     private class UseChargerTask extends AsyncTask<String, Object, String> {
         private String response;
