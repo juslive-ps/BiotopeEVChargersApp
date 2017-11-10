@@ -29,9 +29,9 @@ public class ParkingMapActivity extends AppCompatActivity {
     public static final int REQUEST_ERROR = 0;
     private static final String TAG = "ParkingMapActivity";
 
+    //Authentication with Firebase variables
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
 
     @LayoutRes
     protected int getLayoutResId() {
@@ -62,7 +62,6 @@ public class ParkingMapActivity extends AppCompatActivity {
                 }
             }
         };
-
 
         SupportPlaceAutocompleteFragment autocompleteFragment = (SupportPlaceAutocompleteFragment)
                 getSupportFragmentManager().findFragmentById(R.id.place_support_autocomplete_fragment);
@@ -123,9 +122,7 @@ public class ParkingMapActivity extends AppCompatActivity {
     }
 
 
-
-
-    public void onFragmentInteraction(double latitude, double longitude ) {
+    public void onFragmentInteraction(double latitude, double longitude) {
         ParkingMapFragment parkingMapFragment = (ParkingMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         Location location = new Location("");
         location.setLatitude(latitude);

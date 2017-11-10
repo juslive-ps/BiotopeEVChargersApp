@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="user_account_namings_array">
+        <item>Payments</item>
+        <item>My Bookings</item>
+        <item>Settings</item>
+    </string-array>
+</resources>
