@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <!--<item-->
+            <!--android:id="@+id/account"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_account_box_black_24dp"-->
+            <!--android:title="@string/account_details" />-->
+
+        <item
+            android:id="@+id/payments"
+            android:checked="false"
+            android:icon="@drawable/ic_euro_symbol_black_24dp"
+            android:title="@string/payments" />
+
+        <item
+            android:id="@+id/starred"
+            android:checked="false"
+            android:icon="@drawable/ic_favorite_black_24dp"
+            android:title="@string/favourites" />
+
+        <!--<item-->
+            <!--android:id="@+id/settings"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_settings_black_24dp"-->
+            <!--android:title="@string/settings" />-->
+
+        <item
+            android:id="@+id/logout"
+            android:checked="false"
+            android:icon="@drawable/ic_input_black_24dp"
+            android:title="@string/log_out" />
+
+    </group>
+</menu>
