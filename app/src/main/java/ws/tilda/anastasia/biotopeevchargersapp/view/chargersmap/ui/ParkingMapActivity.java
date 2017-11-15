@@ -1,15 +1,34 @@
 package ws.tilda.anastasia.biotopeevchargersapp.view.chargersmap.ui;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
-
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -29,30 +48,49 @@ public class ParkingMapActivity extends AppCompatActivity {
     public static final int REQUEST_ERROR = 0;
     private static final String TAG = "ParkingMapActivity";
 
-    //Authentication with Firebase variables
+    //Firebase Authentication variables
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    //Navigation Drawer variables
+    private ArrayAdapter<String> mAdapter;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private NavigationView navigationView;
+    private DrawerLayout mDrawerLayout;
+    private FirebaseUser mUser;
 
     @LayoutRes
     protected int getLayoutResId() {
         return R.layout.activity_parking_map;
+
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResId());
-        getSupportActionBar().hide();
+
+        //Setting the Action Bar
+        ActionBar supportActionBar = getSupportActionBar();
+        supportActionBar.setDisplayHomeAsUpEnabled(true);
+        supportActionBar.setHomeButtonEnabled(true);
+        supportActionBar.setTitle("");
+
+        //Making action bar transparent
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
+                WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        supportActionBar.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
         //Checking if the user is authenticated
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
+                mUser = firebaseAuth.getCurrentUser();
+                if (mUser != null) {
                     // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + mUser.getUid());
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -63,6 +101,61 @@ public class ParkingMapActivity extends AppCompatActivity {
             }
         };
 
+        //Initializing NavigationView
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+        //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
+            // This method will trigger on item Click of navigation menu
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+
+
+                //Checking if the item is in checked state or not, if not make it in checked state
+                if (menuItem.isChecked()) menuItem.setChecked(false);
+                else menuItem.setChecked(true);
+
+                //Closing drawer on item click
+                mDrawerLayout.closeDrawers();
+
+                //Check to see which item was being clicked and perform appropriate action
+                switch (menuItem.getItemId()) {
+
+//                    case R.id.account:
+//                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
+//                        return true;
+                    case R.id.payments:
+                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.starred:
+                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
+                        return true;
+//                    case R.id.settings:
+//                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
+//                        return true;
+                    case R.id.logout:
+//                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "onAuthStateChanged:signed_out");
+                        Intent intent = new Intent(getBaseContext(), EmailPasswordActivity.class);
+                        startActivity(intent);
+                        return true;
+                    default:
+                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
+                        return true;
+
+                }
+            }
+        });
+
+        // Initializing Drawer Layout and ActionBarToggle
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //mDrawerLayout.setScrimColor(Color.TRANSPARENT);
+        mDrawerLayout.setDrawerShadow(new ColorDrawable(Color.TRANSPARENT), GravityCompat.START);
+        setupDrawer();
+
+
+        // Adding Google Places search bar to the activity
         SupportPlaceAutocompleteFragment autocompleteFragment = (SupportPlaceAutocompleteFragment)
                 getSupportFragmentManager().findFragmentById(R.id.place_support_autocomplete_fragment);
 
@@ -121,6 +214,18 @@ public class ParkingMapActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
 
     public void onFragmentInteraction(double latitude, double longitude) {
         ParkingMapFragment parkingMapFragment = (ParkingMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -130,9 +235,37 @@ public class ParkingMapActivity extends AppCompatActivity {
         parkingMapFragment.findEvParkingLotBySearchAutocomplete(location);
     }
 
-//    private interface OnFragmentInteractionListener {
-//        public void onFragmentInteraction(double latitude, double longitude);
-//    }
+    private void setupDrawer() {
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                R.string.drawer_open, R.string.drawer_close) {
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+
+            }
+        };
+
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Activate the navigation drawer toggle
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 
 }
