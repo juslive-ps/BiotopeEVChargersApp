@@ -159,9 +159,18 @@ public class XmlParser {
                     if (element.getAttribute("name").equals("MaxParkingHours")) {
                         String maxParkingHours = getValue("value", element);
                         parkingLot.setMaxParkingHours(maxParkingHours);
-                    } else if (element.getAttribute("name").equals("Owner")) {
+                    } else if (element.getAttribute("name").equals("ownedBy")) {
                         String owner = getValue("value", element);
                         parkingLot.setOwner(owner);
+                    } else if (element.getAttribute("name").equals("numberOfOccupiedParkingSpaces")) {
+                        int numberOccupied = Integer.parseInt(getValue("value", element));
+                        parkingLot.setNumberOfOccupiedParkingSpots(numberOccupied);
+                    } else if (element.getAttribute("name").equals("numberOfParkingSpacesForElectricVehicles")) {
+                        int numberOfParkingSpacesForElectricVehicles = Integer.parseInt(getValue("value", element));
+                        parkingLot.setNumberOfEvParkingSpots(numberOfParkingSpacesForElectricVehicles);
+                    } else if (element.getAttribute("name").equals("totalCapacity")) {
+                        int totalCapacity = Integer.parseInt(getValue("value", element));
+                        parkingLot.setTotalCapacity(totalCapacity);
                     }
                 } else if (element.getTagName().equals("Object")) {
                     if (element.getAttribute("type").equals("schema:GeoCoordinates")) {
@@ -171,7 +180,9 @@ public class XmlParser {
                         OpeningHours openingHours = parseOpeningHoursSpecification(element);
                         parkingLot.setOpeningHours(openingHours);
                     } else if (element.getAttribute("type").equals("list")) {
-                        parkingLot.setParkingSectionList(parseParkingSectionList(element));
+//                        parkingLot.setParkingSectionList(parseParkingSectionList(element));
+                        parkingLot.setParkingSpots(parseParkingSpotsList(element));
+
                     }
                 }
             }
@@ -277,109 +288,110 @@ public class XmlParser {
         return openingHours;
     }
 
-    private List<ParkingSection> parseParkingSectionList(Element objectElement) {
-        List<ParkingSection> parkingSections = new ArrayList<>();
-        NodeList nodes = objectElement.getChildNodes();
-
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Node node = nodes.item(i);
-
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element nodeElement = (Element) node;
-
-                if (!nodeElement.getTagName().equals("id")) {
-                    ParkingSection parkingSection = parseParkingSection(nodeElement);
-                    parkingSections.add(parkingSection);
-                }
-            }
-        }
-        return parkingSections;
-    }
-
-    private ParkingSection parseParkingSection(Element nodeElement) {
-
-        ParkingSection parkingSection = new ParkingSection();
-
-
-        NodeList nodes = nodeElement.getChildNodes();
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Node node = nodes.item(i);
-
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element element = (Element) node;
-
-                if (element.getTagName().equals("id")) {
-                    String id = element.getFirstChild().getTextContent();
-                    parkingSection.setId(id);
-                } else if (element.getTagName().equals("InfoItem")) {
-                    if (element.getAttribute("name").equals("MaxLength")) {
-                        String mLength = getValue("value", element);
-                        double maxLength = Double.parseDouble(mLength);
-                        parkingSection.setMaxLength(maxLength);
-                    } else if (element.getAttribute("name").equals("MaxWidth")) {
-                        String mWidth = getValue("value", element);
-                        double maxWidth = Double.parseDouble(mWidth);
-                        parkingSection.setMaxWidth(maxWidth);
-                    } else if (element.getAttribute("name").equals("TotalCapacity")) {
-                        String nSpots = getValue("value", element);
-                        int numberOfSpots = Integer.valueOf(nSpots);
-                        parkingSection.setNumberOfSpots(numberOfSpots);
-                    } else if (element.getAttribute("name").equals("HourlyPrice")) {
-                        String price = getValue("value", element);
-                        double hourlyPrice = Double.parseDouble(price);
-                        parkingSection.setHourlyPrice(hourlyPrice);
-                    } else if (element.getAttribute("name").equals("NumberOfVacantParkingSpaces")) {
-                        String nSpotsAvailable = getValue("value", element);
-                        int numberOfSpotsAvailable = Integer.valueOf(nSpotsAvailable);
-                        parkingSection.setNumberOfSpotsAvailable(numberOfSpotsAvailable);
-                    }
-                } else if (element.getTagName().equals("Object")) {
-                    if (element.getAttribute("type").equals("list")) {
-                        List<ParkingSpot> parkingSpots = parseParkingSpotsList(element);
-                        parkingSection.setParkingSpots(parkingSpots);
-                    } else if (element.getAttribute("type").equals("schema:Vechile")) {
-                        Vehicle vehicle = parseVehicle(element);
-                        parkingSection.setVehicle(vehicle);
-                    }
-                }
-            }
-        }
-        return parkingSection;
-    }
-
-    private Vehicle parseVehicle(Element nodeElement) {
-        Vehicle vehicle = new Vehicle();
-
-        NodeList nodes = nodeElement.getChildNodes();
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Node node = nodes.item(i);
-
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element element = (Element) node;
-
-                if (element.getTagName().equals("id")) {
-                    continue;
-                } else if (element.getTagName().equals("InfoItem")) {
-                    if (element.getAttribute("name").equals("depth")) {
-                        String depth = getValue("value", element).toLowerCase();
-                        vehicle.setDepth(depth);
-                    } else if (element.getTagName().equals("InfoItem")) {
-                        if (element.getAttribute("name").equals("height")) {
-                            String height = getValue("value", element).toLowerCase();
-                            vehicle.setHeight(height);
-                        }
-                    } else if (element.getTagName().equals("InfoItem")) {
-                        if (element.getAttribute("name").equals("width")) {
-                            String width = getValue("value", element).toLowerCase();
-                            vehicle.setWidth(width);
-                        }
-                    }
-                }
-            }
-        }
-
-        return vehicle;
-    }
+//    private List<ParkingSection> parseParkingSectionList(Element objectElement) {
+//        List<ParkingSection> parkingSections = new ArrayList<>();
+//        NodeList nodes = objectElement.getChildNodes();
+//
+//        for (int i = 0; i < nodes.getLength(); i++) {
+//            Node node = nodes.item(i);
+//
+//            if (node.getNodeType() == Node.ELEMENT_NODE) {
+//                Element nodeElement = (Element) node;
+//
+//                if (!nodeElement.getTagName().equals("id")) {
+//                    ParkingSection parkingSection = parseParkingSection(nodeElement);
+//                    parkingSections.add(parkingSection);
+//                }
+//            }
+//        }
+//        return parkingSections;
+//    }
+//
+//
+//    private ParkingSection parseParkingSection(Element nodeElement) {
+//
+//        ParkingSection parkingSection = new ParkingSection();
+//
+//
+//        NodeList nodes = nodeElement.getChildNodes();
+//        for (int i = 0; i < nodes.getLength(); i++) {
+//            Node node = nodes.item(i);
+//
+//            if (node.getNodeType() == Node.ELEMENT_NODE) {
+//                Element element = (Element) node;
+//
+//                if (element.getTagName().equals("id")) {
+//                    String id = element.getFirstChild().getTextContent();
+//                    parkingSection.setId(id);
+//                } else if (element.getTagName().equals("InfoItem")) {
+//                    if (element.getAttribute("name").equals("MaxLength")) {
+//                        String mLength = getValue("value", element);
+//                        double maxLength = Double.parseDouble(mLength);
+//                        parkingSection.setMaxLength(maxLength);
+//                    } else if (element.getAttribute("name").equals("MaxWidth")) {
+//                        String mWidth = getValue("value", element);
+//                        double maxWidth = Double.parseDouble(mWidth);
+//                        parkingSection.setMaxWidth(maxWidth);
+//                    } else if (element.getAttribute("name").equals("TotalCapacity")) {
+//                        String nSpots = getValue("value", element);
+//                        int numberOfSpots = Integer.valueOf(nSpots);
+//                        parkingSection.setNumberOfSpots(numberOfSpots);
+//                    } else if (element.getAttribute("name").equals("HourlyPrice")) {
+//                        String price = getValue("value", element);
+//                        double hourlyPrice = Double.parseDouble(price);
+//                        parkingSection.setHourlyPrice(hourlyPrice);
+//                    } else if (element.getAttribute("name").equals("NumberOfVacantParkingSpaces")) {
+//                        String nSpotsAvailable = getValue("value", element);
+//                        int numberOfSpotsAvailable = Integer.valueOf(nSpotsAvailable);
+//                        parkingSection.setNumberOfSpotsAvailable(numberOfSpotsAvailable);
+//                    }
+//                } else if (element.getTagName().equals("Object")) {
+//                    if (element.getAttribute("type").equals("list")) {
+//                        List<ParkingSpot> parkingSpots = parseParkingSpotsList(element);
+//                        parkingSection.setParkingSpots(parkingSpots);
+//                    } else if (element.getAttribute("type").equals("schema:Vehicle")) {
+//                        Vehicle vehicle = parseVehicle(element);
+//                        parkingSection.setVehicle(vehicle);
+//                    }
+//                }
+//            }
+//        }
+//        return parkingSection;
+//    }
+//
+//    private Vehicle parseVehicle(Element nodeElement) {
+//        Vehicle vehicle = new Vehicle();
+//
+//        NodeList nodes = nodeElement.getChildNodes();
+//        for (int i = 0; i < nodes.getLength(); i++) {
+//            Node node = nodes.item(i);
+//
+//            if (node.getNodeType() == Node.ELEMENT_NODE) {
+//                Element element = (Element) node;
+//
+//                if (element.getTagName().equals("id")) {
+//                    continue;
+//                } else if (element.getTagName().equals("InfoItem")) {
+//                    if (element.getAttribute("name").equals("depth")) {
+//                        String depth = getValue("value", element).toLowerCase();
+//                        vehicle.setDepth(depth);
+//                    } else if (element.getTagName().equals("InfoItem")) {
+//                        if (element.getAttribute("name").equals("height")) {
+//                            String height = getValue("value", element).toLowerCase();
+//                            vehicle.setHeight(height);
+//                        }
+//                    } else if (element.getTagName().equals("InfoItem")) {
+//                        if (element.getAttribute("name").equals("width")) {
+//                            String width = getValue("value", element).toLowerCase();
+//                            vehicle.setWidth(width);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        return vehicle;
+//    }
 
     private Charger parseCharger(Element nodeElement) {
         Charger charger = new Charger();
@@ -406,15 +418,15 @@ public class XmlParser {
                         charger.setLidStatus(lidStatus);
                     }
                 } else if (element.getTagName().equals("Object")) {
-                        if (element.getAttribute("type").equals("mv:Plug")) {
-                            Plug plug = parsePlug(element);
-                            charger.setPlug(plug);
-                        }
+                    if (element.getAttribute("type").equals("mv:Plug")) {
+                        Plug plug = parsePlug(element);
+                        charger.setPlug(plug);
                     }
                 }
             }
-        return charger;
         }
+        return charger;
+    }
 
     private Plug parsePlug(Element nodeElement) {
         Plug plug = new Plug();
@@ -498,11 +510,19 @@ public class XmlParser {
                     } else if (element.getAttribute("name").equals("User")) {
                         String user = getValue("value", element);
                         parkingSpot.setUser(user);
+                    } else if (element.getAttribute("name").equals("vechileHeightLimit")) {
+                        double vehicleHeightLimit = Double.parseDouble(getValue("value", element));
+                        parkingSpot.setVehicleHeightLimit(vehicleHeightLimit);
+                    } else if (element.getAttribute("name").equals("vechileWidthLimit")) {
+                        double vehicleWidthLimit = Double.parseDouble(getValue("value", element));
+                        parkingSpot.setVehicleWidthLimit(vehicleWidthLimit);
+                    } else if (element.getAttribute("name").equals("vechileLengthLimit")) {
+                        double vehicleLengthLimit = Double.parseDouble(getValue("value", element));
+                        parkingSpot.setVehicleLengthLimit(vehicleLengthLimit);
                     }
                 } else if (element.getAttribute("type").equals("mv:Charger")) {
                     Charger charger = parseCharger(element);
                     parkingSpot.setCharger(charger);
-
                 }
             }
         }

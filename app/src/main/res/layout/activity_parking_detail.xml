@@ -25,11 +25,11 @@
 
         <include layout="@layout/parking_detail_first_card"/>
 
-        <include layout="@layout/parking_detail_third_card"/>
+        <!--<include layout="@layout/parking_detail_third_card"/>-->
 
         <include layout="@layout/parking_detail_second_card"/>
 
-        <include layout="@layout/parking_detail_fourth_card"/>
+        <!--<include layout="@layout/parking_detail_fourth_card"/>-->
 
     </LinearLayout>
 

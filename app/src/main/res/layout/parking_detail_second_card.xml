@@ -14,36 +14,36 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    <!--<LinearLayout-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
 
-        <TextView
-            android:id="@+id/parkingLot_owner_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:paddingStart="15dp"
-            android:paddingTop="10dp"
-            android:text="@string/parkingLot_owner_label"
-            android:textColor="@color/common_google_signin_btn_text_dark_focused"
-            android:textSize="14sp"/>
+        <!--<TextView-->
+            <!--android:id="@+id/parkingLot_owner_label"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:paddingBottom="10dp"-->
+            <!--android:paddingLeft="15dp"-->
+            <!--android:paddingRight="15dp"-->
+            <!--android:paddingStart="15dp"-->
+            <!--android:paddingTop="10dp"-->
+            <!--android:text="@string/parkingLot_owner_label"-->
+            <!--android:textColor="@color/common_google_signin_btn_text_dark_focused"-->
+            <!--android:textSize="14sp"/>-->
 
-        <TextView
-            android:id="@+id/parkingLot_owner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:paddingStart="15dp"
-            android:paddingTop="10dp"
-            android:textColor="#838B8B"
-            android:textSize="14sp"/>
-    </LinearLayout>
+        <!--<TextView-->
+            <!--android:id="@+id/parkingLot_owner"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:paddingBottom="10dp"-->
+            <!--android:paddingLeft="15dp"-->
+            <!--android:paddingRight="15dp"-->
+            <!--android:paddingStart="15dp"-->
+            <!--android:paddingTop="10dp"-->
+            <!--android:textColor="#838B8B"-->
+            <!--android:textSize="14sp"/>-->
+    <!--</LinearLayout>-->
 
     <LinearLayout
         android:layout_width="fill_parent"

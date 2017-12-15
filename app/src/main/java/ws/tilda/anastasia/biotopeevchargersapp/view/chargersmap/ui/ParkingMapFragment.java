@@ -266,7 +266,7 @@ public class ParkingMapFragment extends SupportMapFragment {
         List<ParkingLot> parkingLots = ps.getParkingLots();
         for (ParkingLot parkingLot : parkingLots) {
             GeoCoordinates position = parkingLot.getPosition();
-            int numberOfSpotsAvailable = parkingLot.getParkingSectionList().get(0).getNumberOfSpotsAvailable();
+            int numberOfSpotsAvailable = parkingLot.getNumberOfEvParkingSpots();
 
             LatLng itemPoint = new LatLng(position.getLatitude(), position.getLongitude());
 
@@ -288,7 +288,9 @@ public class ParkingMapFragment extends SupportMapFragment {
 
     private float getMarkerColor(int numberOfSpotsAvailable) {
         if (numberOfSpotsAvailable == 0) {
-            return BitmapDescriptorFactory.HUE_RED;
+//            return BitmapDescriptorFactory.HUE_RED;
+            return BitmapDescriptorFactory.HUE_GREEN;
+
         }
         return BitmapDescriptorFactory.HUE_GREEN;
     }
@@ -348,7 +350,6 @@ public class ParkingMapFragment extends SupportMapFragment {
 
         private Call<String> callingApi(Location location) {
             ApiClient.RetrofitService retrofitService = ApiClient.getApi();
-//            return retrofitService.getResponse(getString(R.string.query_find_evspot));
             return retrofitService.getResponse(getQueryFormattedString(location));
 
         }

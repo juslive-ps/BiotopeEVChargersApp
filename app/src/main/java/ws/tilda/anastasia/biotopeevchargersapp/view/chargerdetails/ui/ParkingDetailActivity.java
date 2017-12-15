@@ -62,20 +62,20 @@ public class ParkingDetailActivity extends AppCompatActivity {
     MapView mMapView;
     @BindView(R.id.parkingLot_id)
     TextView mParkingLotId;
-    @BindView(R.id.parkingLot_owner)
-    TextView mParkingLotOwner;
+//    @BindView(R.id.parkingLot_owner)
+//    TextView mParkingLotOwner;
     @BindView(R.id.parkingLot_opening_hours)
     TextView mOpeningHours;
     @BindView(R.id.parkingLot_address)
     TextView mAddress;
-    @BindView(R.id.parkingLot_hourly_price)
-    TextView mHourlyPrice;
-    @BindView(R.id.parking_spot_dimensions)
-    TextView mEvSpotDimensions;
-    @BindView(R.id.max_spots)
-    TextView mMaxSpots;
-    @BindView(R.id.spots_available)
-    TextView mSpotsAvailable;
+//    @BindView(R.id.parkingLot_hourly_price)
+//    TextView mHourlyPrice;
+//    @BindView(R.id.parking_spot_dimensions)
+//    TextView mEvSpotDimensions;
+//    @BindView(R.id.max_spots)
+//    TextView mMaxSpots;
+//    @BindView(R.id.spots_available)
+//    TextView mSpotsAvailable;
 
     private XmlParser parser;
 
@@ -135,9 +135,8 @@ public class ParkingDetailActivity extends AppCompatActivity {
 
     private void fillParkingLotInfo(ParkingLot parkingLot) {
         mParkingLotId.setText(parkingLot.getId());
-        mParkingLotOwner.setText(parkingLot.getOwner());
-        mOpeningHours.setText(parkingLot.getOpeningHours().getOpen()
-                + " - " + parkingLot.getOpeningHours().getClose());
+//        mParkingLotOwner.setText(parkingLot.getOwner());
+        mOpeningHours.setText(String.format("%s - %s", parkingLot.getOpeningHours().getOpen(), parkingLot.getOpeningHours().getClose()));
         mAddress.setText(parkingLot.getPosition().getAddress().toString());
         fillEvSectionInfo(parkingLot);
 
@@ -148,49 +147,49 @@ public class ParkingDetailActivity extends AppCompatActivity {
     }
 
     private void fillEvSectionInfo(ParkingLot parkingLot) {
-        List<ParkingSection> parkingSections = parkingLot.getParkingSectionList();
-        ParkingSection evParkingSection = extractEvParkingSection(parkingSections);
-        mHourlyPrice.setText(Double.toString(evParkingSection.getHourlyPrice()) + " euro");
-        mEvSpotDimensions.setText(evParkingSection.getVehicle().getDepth() + " x "
-                + evParkingSection.getVehicle().getWidth() + " x "
-                + evParkingSection.getVehicle().getHeight());
-        mMaxSpots.setText(String.valueOf(evParkingSection.getNumberOfSpots()));
-        mSpotsAvailable.setText(String.valueOf(evParkingSection.getNumberOfSpotsAvailable()));
+//        List<ParkingSection> parkingSections = parkingLot.getParkingSectionList();
+//        ParkingSection evParkingSection = extractEvParkingSection(parkingSections);
+//        mHourlyPrice.setText(Double.toString(evParkingSection.getHourlyPrice()) + " euro");
+//        mEvSpotDimensions.setText(evParkingSection.getVehicle().getDepth() + " x "
+//                + evParkingSection.getVehicle().getWidth() + " x "
+//                + evParkingSection.getVehicle().getHeight());
+//        mMaxSpots.setText(String.valueOf(parkingLot.getNumberOfEvParkingSpots()));
+//        mSpotsAvailable.setText(String.valueOf(parkingLot.getNumberOfEvParkingSpots()));
 
-        evParkingSpots = (ArrayList<ParkingSpot>) evParkingSection.getParkingSpots();
+        evParkingSpots = (ArrayList<ParkingSpot>) parkingLot.getParkingSpots();
     }
 
-    private ParkingSection extractEvParkingSection(List<ParkingSection> parkingSections) {
-        ParkingSection evParkingSection = null;
-        for (ParkingSection parkingSection : parkingSections) {
-            if (parkingSection.getId().equals("ElectricVehicleParkingSpace")) {
-                evParkingSection = parkingSection;
-            } else {
-                evParkingSection = null;
-            }
-        }
-        return evParkingSection;
-    }
+//    private ParkingSection extractEvParkingSection(List<ParkingSection> parkingSections) {
+//        ParkingSection evParkingSection = null;
+//        for (ParkingSection parkingSection : parkingSections) {
+//            if (parkingSection.getId().equals("ElectricVehicleParkingSpace")) {
+//                evParkingSection = parkingSection;
+//            } else {
+//                evParkingSection = null;
+//            }
+//        }
+//        return evParkingSection;
+//    }
 
     private void setZoom(ParkingLot parkingLot) {
         LatLng latLng = getParkingLotLatLng(parkingLot);
 
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,15);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
         mMap.moveCamera(cameraUpdate);
     }
 
     @NonNull
     private void addMarkerToMapView(ParkingLot parkingLot) {
         LatLng latLng = getParkingLotLatLng(parkingLot);
-        int numberOfSpotsAvailable = parkingLot.getParkingSectionList().get(0).getNumberOfSpotsAvailable();
+        int numberOfSpotsAvailable = parkingLot.getNumberOfEvParkingSpots();
 
         MarkerOptions itemMarker = new MarkerOptions().position(latLng);
         itemMarker.icon(BitmapDescriptorFactory.defaultMarker(getMarkerColor(numberOfSpotsAvailable)));
         mMap.addMarker(itemMarker);
     }
 
-    private float getMarkerColor(int numberOfSpotsAvailable){
-        if(numberOfSpotsAvailable == 0) {
+    private float getMarkerColor(int numberOfSpotsAvailable) {
+        if (numberOfSpotsAvailable == 0) {
             return BitmapDescriptorFactory.HUE_RED;
         }
         return BitmapDescriptorFactory.HUE_GREEN;
@@ -297,8 +296,11 @@ public class ParkingDetailActivity extends AppCompatActivity {
             List<ParkingLot> parkingLots = parkingService.getParkingLots();
             for (ParkingLot parkingLot : parkingLots) {
                 if (parkingLot.getId().equals(mParkingLot.getId())) {
-                    evParkingSpots =
-                            (ArrayList) parkingLot.getParkingSectionList().get(0).getParkingSpots();
+                    if(parkingLot.getParkingSpots() != null) {
+                        evParkingSpots =
+                                (ArrayList) parkingLot.getParkingSpots();
+                    }
+
                     openEvSpotListActivity(evParkingSpots);
 
                 }

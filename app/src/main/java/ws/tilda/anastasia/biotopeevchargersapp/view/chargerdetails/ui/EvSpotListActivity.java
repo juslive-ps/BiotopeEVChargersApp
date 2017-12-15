@@ -48,10 +48,6 @@ public class EvSpotListActivity extends AppCompatActivity {
     private EvParkingSpotsAdapter evParkingSpotsAdapter;
     private String parkingLotId;
 
-
-
-
-
     static double parkingLotLat;
     static double parkingLotLon;
 
@@ -70,14 +66,12 @@ public class EvSpotListActivity extends AppCompatActivity {
         parser = new XmlParser();
 
 
-
         user = new User();
         user.setUsername("TK");
         user.setPassword("CurrentPassword");
         registration = new Registration();
         registration.addUser(user);
         users = registration.getUsers();
-
 
 
         ActionBar actionBar = getSupportActionBar();
@@ -224,7 +218,7 @@ public class EvSpotListActivity extends AppCompatActivity {
         private String getBookingQueryString(String evParkingLotId, String enParkingSpotId, String username, String isAvailable) {
 
             return String.format(Locale.US,
-                    getString(R.string.query_book_evspot),
+                    getString(R.string.query_book_evspot_v2),
                     evParkingLotId,
                     enParkingSpotId,
                     username,
@@ -297,7 +291,7 @@ public class EvSpotListActivity extends AppCompatActivity {
         private String getBookingQueryString(String evParkingLotId, String enParkingSpotId, String username, String lidStatus) {
 
             return String.format(Locale.US,
-                    getString(R.string.query_use_charger),
+                    getString(R.string.query_use_charger_v2),
                     evParkingLotId,
                     enParkingSpotId,
                     username,

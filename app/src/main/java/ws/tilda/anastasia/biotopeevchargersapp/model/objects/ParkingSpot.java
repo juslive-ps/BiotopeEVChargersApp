@@ -9,9 +9,45 @@ public class ParkingSpot implements Parcelable {
     private String user;
     private Charger charger;
     private boolean isBookedByOurUser;
+    private double vehicleLengthLimit;
+    private double vehicleHeightLimit;
+    private double vehicleWidthLimit;
+    private PricesSpecification mPricesSpecification;
 
     public ParkingSpot() {
 
+    }
+
+    public double getVehicleLengthLimit() {
+        return vehicleLengthLimit;
+    }
+
+    public void setVehicleLengthLimit(double vehicleLengthLimit) {
+        this.vehicleLengthLimit = vehicleLengthLimit;
+    }
+
+    public double getVehicleHeightLimit() {
+        return vehicleHeightLimit;
+    }
+
+    public void setVehicleHeightLimit(double vehicleHeightLimit) {
+        this.vehicleHeightLimit = vehicleHeightLimit;
+    }
+
+    public double getVehicleWidthLimit() {
+        return vehicleWidthLimit;
+    }
+
+    public void setVehicleWidthLimit(double vehicleWidthLimit) {
+        this.vehicleWidthLimit = vehicleWidthLimit;
+    }
+
+    public PricesSpecification getPricesSpecification() {
+        return mPricesSpecification;
+    }
+
+    public void setPricesSpecification(PricesSpecification pricesSpecification) {
+        mPricesSpecification = pricesSpecification;
     }
 
     public boolean isBookedByOurUser() {
