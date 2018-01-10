@@ -153,7 +153,7 @@ public class EvSpotListActivity extends AppCompatActivity {
     private String parse(InputStream stream) {
         String responseCode = "";
         try {
-            responseCode = parser.parseResponseCode(stream);
+            responseCode = parser.parseReturnCode(stream);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -11,9 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -30,6 +28,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -170,7 +170,13 @@ public class ParkingMapFragment extends SupportMapFragment {
                     public void onConnected(@Nullable Bundle bundle) {
                         getActivity().invalidateOptionsMenu();
                         if (hasLocationPermission()) {
-                            findEvParkingLotByCurrentLocation();
+                            /*
+                            Activate this method if it's needed to load the parking lots on
+                            current user location automatically upon app launch
+                            */
+//                            findEvParkingLotByCurrentLocation();
+
+
                         } else {
                             requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
                         }
@@ -233,14 +239,13 @@ public class ParkingMapFragment extends SupportMapFragment {
         if (mMap == null) {
             return;
         }
+
         mMap.clear();
         enableMyLocation();
 
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
 
         addAllMarkersToMap(ps, boundsBuilder);
-
-        setZoom(boundsBuilder);
     }
 
     private void setZoom(LatLngBounds.Builder boundsBuilder) {
@@ -264,26 +269,36 @@ public class ParkingMapFragment extends SupportMapFragment {
 
     private void addAllMarkersToMap(ParkingService ps, LatLngBounds.Builder boundsBuilder) {
         List<ParkingLot> parkingLots = ps.getParkingLots();
-        for (ParkingLot parkingLot : parkingLots) {
-            GeoCoordinates position = parkingLot.getPosition();
-            int numberOfSpotsAvailable = parkingLot.getNumberOfEvParkingSpots();
 
-            LatLng itemPoint = new LatLng(position.getLatitude(), position.getLongitude());
+        if (!parkingLots.isEmpty()) {
+            for (ParkingLot parkingLot : parkingLots) {
+                GeoCoordinates position = parkingLot.getPosition();
+                int numberOfSpotsAvailable = parkingLot.getNumberOfEvParkingSpots();
+
+                LatLng itemPoint = new LatLng(position.getLatitude(), position.getLongitude());
 
 
-            Marker itemMarker = addMarkerToMap(itemPoint, getMarkerColor(numberOfSpotsAvailable));
+                Marker itemMarker = addMarkerToMap(itemPoint, getMarkerColor(numberOfSpotsAvailable));
 
-            String snippetTitle = getResources().getString(R.string.map_parking_snippet_title,
-                    parkingLot.getId());
-            itemMarker.setTitle(snippetTitle);
+                String snippetTitle = getResources().getString(R.string.map_parking_snippet_title,
+                        parkingLot.getId());
+                itemMarker.setTitle(snippetTitle);
 
-            String snippetText = getResources().getString(R.string.click_to_see_details);
-            itemMarker.setSnippet(snippetText);
+                String snippetText = getResources().getString(R.string.click_to_see_details);
+                itemMarker.setSnippet(snippetText);
 
-            itemMarker.setTag(parkingLot);
+                itemMarker.setTag(parkingLot);
 
-            boundsBuilder.include(itemPoint);
+                boundsBuilder.include(itemPoint);
+
+                setZoom(boundsBuilder);
+            }
+        } else {
+            Toast.makeText(getContext(), "There are no available EV parking lots at this location",
+                    Toast.LENGTH_SHORT).show();
         }
+
+
     }
 
     private float getMarkerColor(int numberOfSpotsAvailable) {
@@ -302,7 +317,7 @@ public class ParkingMapFragment extends SupportMapFragment {
         return mMap.addMarker(itemMarker);
     }
 
-    private ParkingService parse(InputStream stream) {
+    private ParkingService parseParkingService(InputStream stream) {
         ParkingService parkingService = new ParkingService();
         try {
             parkingService = xmlParser.parse(stream);
@@ -316,6 +331,7 @@ public class ParkingMapFragment extends SupportMapFragment {
     private class SearchParkingTask extends AsyncTask<Location, Object, ParkingService> {
         private ParkingService parkingService = new ParkingService();
         private String response;
+        private String returnCode;
 
         @Override
         protected ParkingService doInBackground(Location... params) {
@@ -325,7 +341,7 @@ public class ParkingMapFragment extends SupportMapFragment {
             InputStream stream = null;
             try {
                 stream = new ByteArrayInputStream(getResponse(call).getBytes("UTF-8"));
-                parkingService = parse(stream);
+                parkingService = parseParkingService(stream);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -346,6 +362,19 @@ public class ParkingMapFragment extends SupportMapFragment {
             }
 
             return response;
+        }
+
+        private String getReturnCode(InputStream stream) {
+            String returnCode = null;
+            try {
+                returnCode = xmlParser.parseReturnCode(stream);
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return returnCode;
         }
 
         private Call<String> callingApi(Location location) {

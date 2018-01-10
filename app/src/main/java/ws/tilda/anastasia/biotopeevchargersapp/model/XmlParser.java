@@ -30,7 +30,7 @@ import ws.tilda.anastasia.biotopeevchargersapp.model.objects.Vehicle;
 public class XmlParser {
     private ParkingService parkingService = new ParkingService();
 
-    public ParkingService parse(InputStream is) throws XmlPullParserException, IOException {
+    public ParkingService parse(InputStream is) throws XmlPullParserException, IOException, IllegalStateException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = null;
 
@@ -59,7 +59,7 @@ public class XmlParser {
         return parkingService;
     }
 
-    public String parseResponseCode(InputStream is) throws XmlPullParserException, IOException {
+    public String parseReturnCode(InputStream is) throws XmlPullParserException, IOException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = null;
         String returnCode = null;
