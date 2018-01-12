@@ -9,17 +9,17 @@
             <!--android:icon="@drawable/ic_account_box_black_24dp"-->
             <!--android:title="@string/account_details" />-->
 
-        <item
-            android:id="@+id/payments"
-            android:checked="false"
-            android:icon="@drawable/ic_euro_symbol_black_24dp"
-            android:title="@string/payments" />
+        <!--<item-->
+            <!--android:id="@+id/payments"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_euro_symbol_black_24dp"-->
+            <!--android:title="@string/payments" />-->
 
-        <item
-            android:id="@+id/starred"
-            android:checked="false"
-            android:icon="@drawable/ic_favorite_black_24dp"
-            android:title="@string/favourites" />
+        <!--<item-->
+            <!--android:id="@+id/starred"-->
+            <!--android:checked="false"-->
+            <!--android:icon="@drawable/ic_favorite_black_24dp"-->
+            <!--android:title="@string/favourites" />-->
 
         <!--<item-->
             <!--android:id="@+id/settings"-->

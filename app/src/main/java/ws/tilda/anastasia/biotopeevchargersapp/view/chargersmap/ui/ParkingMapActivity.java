@@ -28,6 +28,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -58,6 +59,7 @@ public class ParkingMapActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private DrawerLayout mDrawerLayout;
     private FirebaseUser mUser;
+    private TextView mUserEmail;
 
     @LayoutRes
     protected int getLayoutResId() {
@@ -70,18 +72,34 @@ public class ParkingMapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResId());
 
-        //Setting the Action Bar
-        ActionBar supportActionBar = getSupportActionBar();
-        supportActionBar.setDisplayHomeAsUpEnabled(true);
-        supportActionBar.setHomeButtonEnabled(true);
-        supportActionBar.setTitle("");
+        ActionBar supportActionBar = setingActionBar();
 
-        //Making action bar transparent
+        setTransparentActionBar(supportActionBar);
+
+        checkAuthentication();
+
+        initializingNavigDrawer();
+
+        settingGooglePlacesSearchBar();
+    }
+
+    private void setTransparentActionBar(ActionBar supportActionBar) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
                 WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         supportActionBar.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+    }
 
+    @NonNull
+    private ActionBar setingActionBar() {
+        ActionBar supportActionBar = getSupportActionBar();
+        supportActionBar.setDisplayHomeAsUpEnabled(true);
+        supportActionBar.setHomeButtonEnabled(true);
+        supportActionBar.setTitle("");
+        return supportActionBar;
+    }
+
+    private void checkAuthentication() {
         //Checking if the user is authenticated
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -100,84 +118,8 @@ public class ParkingMapActivity extends AppCompatActivity {
                 }
             }
         };
-
-        //Initializing NavigationView
-        navigationView = (NavigationView) findViewById(R.id.navigation_view);
-
-        //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-
-            // This method will trigger on item Click of navigation menu
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-
-
-                //Checking if the item is in checked state or not, if not make it in checked state
-                if (menuItem.isChecked()) menuItem.setChecked(false);
-                else menuItem.setChecked(true);
-
-                //Closing drawer on item click
-                mDrawerLayout.closeDrawers();
-
-                //Check to see which item was being clicked and perform appropriate action
-                switch (menuItem.getItemId()) {
-
-//                    case R.id.account:
-//                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
-//                        return true;
-                    case R.id.payments:
-                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.starred:
-                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
-                        return true;
-//                    case R.id.settings:
-//                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
-//                        return true;
-                    case R.id.logout:
-//                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "onAuthStateChanged:signed_out");
-                        Intent intent = new Intent(getBaseContext(), EmailPasswordActivity.class);
-                        startActivity(intent);
-                        return true;
-                    default:
-                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
-                        return true;
-
-                }
-            }
-        });
-
-        // Initializing Drawer Layout and ActionBarToggle
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        //mDrawerLayout.setScrimColor(Color.TRANSPARENT);
-        mDrawerLayout.setDrawerShadow(new ColorDrawable(Color.TRANSPARENT), GravityCompat.START);
-        setupDrawer();
-
-
-        // Adding Google Places search bar to the activity
-        SupportPlaceAutocompleteFragment autocompleteFragment = (SupportPlaceAutocompleteFragment)
-                getSupportFragmentManager().findFragmentById(R.id.place_support_autocomplete_fragment);
-
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                LatLng latLang = place.getLatLng();
-                double latitude = latLang.latitude;
-                double longitude = latLang.longitude;
-                onFragmentInteraction(latitude, longitude);
-                Log.i(TAG, "LatLong " + latitude + " " + longitude);
-
-            }
-
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Log.i(TAG, "An error occurred: " + status);
-            }
-        });
-
     }
+
 
     @Override
     public void onStart() {
@@ -226,6 +168,30 @@ public class ParkingMapActivity extends AppCompatActivity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
+    private void settingGooglePlacesSearchBar() {
+        // Adding Google Places search bar to the activity
+        SupportPlaceAutocompleteFragment autocompleteFragment = (SupportPlaceAutocompleteFragment)
+                getSupportFragmentManager().findFragmentById(R.id.place_support_autocomplete_fragment);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                LatLng latLang = place.getLatLng();
+                double latitude = latLang.latitude;
+                double longitude = latLang.longitude;
+                onFragmentInteraction(latitude, longitude);
+                Log.i(TAG, "LatLong " + latitude + " " + longitude);
+
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
+    }
+
 
     public void onFragmentInteraction(double latitude, double longitude) {
         ParkingMapFragment parkingMapFragment = (ParkingMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -233,6 +199,63 @@ public class ParkingMapActivity extends AppCompatActivity {
         location.setLatitude(latitude);
         location.setLongitude(longitude);
         parkingMapFragment.findEvParkingLotBySearchAutocomplete(location);
+    }
+
+    private void initializingNavigDrawer() {
+        //Initializing NavigationView
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+        //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
+            // This method will trigger on item Click of navigation menu
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+
+
+                //Checking if the item is in checked state or not, if not make it in checked state
+                if (menuItem.isChecked()) menuItem.setChecked(false);
+                else menuItem.setChecked(true);
+
+                //Closing drawer on item click
+                mDrawerLayout.closeDrawers();
+
+                //Check to see which item was being clicked and perform appropriate action
+                switch (menuItem.getItemId()) {
+
+//                    case R.id.account:
+//                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
+//                        return true;
+//                    case R.id.payments:
+//                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
+//                        return true;
+//                    case R.id.starred:
+//                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
+//                        return true;
+//                    case R.id.settings:
+//                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
+//                        return true;
+                    case R.id.logout:
+//                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "onAuthStateChanged:signed_out");
+                        Intent intent = new Intent(getBaseContext(), EmailPasswordActivity.class);
+                        startActivity(intent);
+                        return true;
+                    default:
+                        Toast.makeText(getApplicationContext(), R.string.update_needed, Toast.LENGTH_SHORT).show();
+                        return true;
+
+                }
+            }
+        });
+
+        // Initializing Drawer Layout and ActionBarToggle
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //mDrawerLayout.setScrimColor(Color.TRANSPARENT);
+        mDrawerLayout.setDrawerShadow(new ColorDrawable(Color.TRANSPARENT), GravityCompat.START);
+        setupDrawer();
+        mUserEmail = (TextView) findViewById(R.id.email);
+        //mUserEmail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
     }
 
     private void setupDrawer() {
