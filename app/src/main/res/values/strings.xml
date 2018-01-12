@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BiotopeEVChargersApp</string>
+    <string name="app_name">BiotopeEvChargersApp</string>
     <string name="search">Find a charger near you</string>
     <string name="title_activity_maps">Map</string>
 

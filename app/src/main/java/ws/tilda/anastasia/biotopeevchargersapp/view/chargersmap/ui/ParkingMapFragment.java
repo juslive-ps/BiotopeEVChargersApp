@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
+import ws.tilda.anastasia.biotopeevchargersapp.BiotopeEvChargersApp;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
 import ws.tilda.anastasia.biotopeevchargersapp.model.XmlParser;
 import ws.tilda.anastasia.biotopeevchargersapp.model.networking.ApiClient;
@@ -109,7 +110,7 @@ public class ParkingMapFragment extends SupportMapFragment {
 //        switch (item.getItemId()) {
 //            case R.id.action_locate:
 //                if (hasLocationPermission()) {
-//                    findEvParkingLotByCurrentLocation();
+//                    findParkingByUserCurrentLocation();
 //                } else {
 //                    requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
 //                }
@@ -125,7 +126,7 @@ public class ParkingMapFragment extends SupportMapFragment {
 //        switch (requestCode) {
 //            case REQUEST_LOCATION_PERMISSIONS:
 //                if (hasLocationPermission()) {
-//                    findEvParkingLotByCurrentLocation();
+//                    findParkingByUserCurrentLocation();
 //                }
 //            default:
 //                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -174,7 +175,7 @@ public class ParkingMapFragment extends SupportMapFragment {
                             Activate this method if it's needed to load the parking lots on
                             current user location automatically upon app launch
                             */
-//                            findEvParkingLotByCurrentLocation();
+//                            findParkingByUserCurrentLocation();
 
 
                         } else {
@@ -198,7 +199,7 @@ public class ParkingMapFragment extends SupportMapFragment {
     }
 
 
-    private void findEvParkingLotByCurrentLocation() {
+    private void findParkingByUserCurrentLocation() {
         LocationRequest request = LocationRequest.create();
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         request.setNumUpdates(1);
@@ -221,13 +222,19 @@ public class ParkingMapFragment extends SupportMapFragment {
                     @Override
                     public void onLocationChanged(Location location) {
                         Log.i(TAG, "Got a fix: " + location);
-                        new SearchParkingTask().execute(location);
+                        findEvParkingLot(location);
                     }
                 });
     }
 
-    public void findEvParkingLotBySearchAutocomplete(Location location) {
-        new SearchParkingTask().execute(location);
+    public void findEvParkingLot(Location location) {
+        if (BiotopeEvChargersApp.hasNetwork()) {
+            new SearchParkingTask().execute(location);
+        } else {
+            Toast.makeText(getContext(), R.string.no_network_connection, Toast.LENGTH_SHORT)
+                    .show();
+        }
+
     }
 
     private boolean hasLocationPermission() {

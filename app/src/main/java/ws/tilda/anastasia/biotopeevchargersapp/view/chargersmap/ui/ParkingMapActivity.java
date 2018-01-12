@@ -1,33 +1,26 @@
 package ws.tilda.anastasia.biotopeevchargersapp.view.chargersmap.ui;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +35,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 
+import ws.tilda.anastasia.biotopeevchargersapp.BiotopeEvChargersApp;
 import ws.tilda.anastasia.biotopeevchargersapp.R;
 import ws.tilda.anastasia.biotopeevchargersapp.view.authentication.EmailPasswordActivity;
 
@@ -198,7 +192,7 @@ public class ParkingMapActivity extends AppCompatActivity {
         Location location = new Location("");
         location.setLatitude(latitude);
         location.setLongitude(longitude);
-        parkingMapFragment.findEvParkingLotBySearchAutocomplete(location);
+            parkingMapFragment.findEvParkingLot(location);
     }
 
     private void initializingNavigDrawer() {
