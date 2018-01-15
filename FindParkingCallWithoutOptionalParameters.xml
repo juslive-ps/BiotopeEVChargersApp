@@ -1,0 +1,173 @@
+<omiEnvelope xmlns="http://www.opengroup.org/xsd/omi/1.0/" version="1.0" ttl="0">
+  <call msgformat="odf">
+    <msg>
+      <Objects xmlns="http://www.opengroup.org/xsd/odf/1.0/">
+        <Object>
+          <id>ParkingService</id>
+          <InfoItem name="FindParking">
+            <value unixTime="1503488290" type="odf" dateTime="2017-08-23T14:38:10.575+03:00">
+                    <Objects>
+                      <Object type="FindParkingRequest">
+                        <id>Parameters</id>
+                        <description lang="English">List of possible parameters to request.</description>
+                        <InfoItem type="schema:Distance" name="DistanceFromDestination" required="true">
+                          <value unixTime="1503488290" dateTime="2017-08-23T14:38:10.575+03:00">1000</value>
+                        </InfoItem>
+                        <Object required="true" type="schema:GeoCoordinates">
+                          <id>Destination</id>
+                          <InfoItem name="latitude" required="true">
+                            <value unixTime="1503488290" type="xs:double" dateTime="2017-08-23T14:38:10.575+03:00">60.187556</value>
+                          </InfoItem>
+                          <InfoItem name="longitude" required="true">
+                            <value unixTime="1503488290" type="xs:double" dateTime="2017-08-23T14:38:10.575+03:00">24.8213216</value>
+                          </InfoItem>
+                        </Object>
+                        <Object required="true" type="mv:ElectricVehicle"><!-- IMPORTANT value of type attribute defines wanted parking space type: Car, Motorbike.. -->
+                          <id>Vehicle</id>
+                          <!-- Needs more discusion, because current way is not intuitive. Using class's name as value of InfoItem could also be odd as well as using it as name of the Object.-->
+                        </Object>
+                      </Object>
+                    </Objects>
+                  </value>
+          </InfoItem>
+        </Object>
+      </Objects>
+    </msg>
+  </call>
+</omiEnvelope>
+
+<omiEnvelope ttl="10" version="1.0" xmlns="http://www.opengroup.org/xsd/omi/1.0/">
+  <response>
+    <result msgformat="odf">
+      <return returnCode="200">
+      </return>
+      <msg>
+        <Objects xmlns="http://www.opengroup.org/xsd/odf/1.0/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:odf="http://www.opengroup.org/xsd/odf/1.0/">
+          <Object>
+            <id>ParkingService</id>
+            <Object>
+              <id>ParkingFacilities</id>
+              <Object type="schema:ParkingFacility">
+                <id>ParkingFacility</id>
+                <Object type="schema:GeoCoordinates">
+                  <id>geo</id>
+                  <InfoItem name="latitude">
+                    <value unixTime="1503489474" type="xs:double" dateTime="2017-08-23T14:57:54.499+03:00">60.187556</value>
+                  </InfoItem>
+                  <InfoItem name="longitude">
+                    <value unixTime="1503489474" type="xs:double" dateTime="2017-08-23T14:57:54.499+03:00">24.8213216</value>
+                  </InfoItem>
+                  <Object type="schema:PostalAddress">
+                    <id>address</id>
+                    <InfoItem name="addressCountry">
+                      <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.499+03:00">Finland</value>
+                    </InfoItem>
+                    <InfoItem name="addressLocality">
+                      <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.499+03:00">Otaniemi</value>
+                    </InfoItem>
+                    <InfoItem name="addressRegion">
+                      <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.499+03:00">Espoo</value>
+                    </InfoItem>
+                    <InfoItem name="streetAddress">
+                      <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.499+03:00">Konemiehentie 4</value>
+                    </InfoItem>
+                  </Object>
+                </Object>
+                <Object type="schema:OpeningHoursSpecification">
+                  <id>openingHoursSpecification</id>
+                  <InfoItem name="opens">
+                    <value unixTime="1503489474" type="schema:Time" dateTime="2017-08-23T14:57:54.499+03:00">00:00</value>
+                  </InfoItem>
+                  <InfoItem name="closes">
+                    <value unixTime="1503489474" type="schema:Time" dateTime="2017-08-23T14:57:54.499+03:00">24:00</value>
+                  </InfoItem>
+                </Object>
+                <Object type="list">
+                  <id>ParkingSpaces</id>
+                  <Object type="mv:ParkingSpace">
+                    <id>EVSpace1</id>
+                    <InfoItem name="Available">
+                      <value unixTime="1503489474" type="xs:boolean" dateTime="2017-08-23T14:57:54.498+03:00">false</value>
+                    </InfoItem>
+                    <InfoItem name="User">
+                      <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.498+03:00">VALUE_PLACEHOLDER</value>
+                    </InfoItem>
+                    <Object type="mv:Charger">
+                      <id>Charger</id>
+                      <InfoItem type="mv:Brand" name="Brand">
+                        <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.498+03:00">Exampler</value>
+                      </InfoItem>
+                      <InfoItem type="mv:Model" name="Model">
+                        <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.498+03:00">ExampleI</value>
+                      </InfoItem>
+                      <Object type="mv:Plug">
+                        <id>Plug</id>
+                        <InfoItem type="mv:PlugType" name="PlugType">
+                          <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.498+03:00">Schuko Plug</value>
+                        </InfoItem>
+                        <InfoItem type="mv:Power" name="Power">
+                          <value unixTime="1503489474" type="xs:double" dateTime="2017-08-23T14:57:54.498+03:00">2395.0</value>
+                        </InfoItem>
+                        <InfoItem type="mv:Voltage" name="Voltage">
+                          <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.498+03:00">Schuko Plug</value>
+                        </InfoItem>
+                        <InfoItem type="mv:CableAvailable" name="CableAvailable">
+                          <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.498+03:00">false</value>
+                        </InfoItem>
+                        <InfoItem type="mv:LockerAvailable" name="LockerAvailable">
+                          <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.498+03:00">true</value>
+                        </InfoItem>
+                        <InfoItem type="mv:ChargingSpeed" name="ChargingSpeed">
+                          <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.498+03:00">mv:Standard</value>
+                        </InfoItem>
+                      </Object>
+                    </Object>
+                  </Object>
+                  <Object type="mv:ParkingSpace">
+                    <id>EVSpace2</id>
+                    <InfoItem name="Available">
+                      <value unixTime="1503489474" type="xs:boolean" dateTime="2017-08-23T14:57:54.498+03:00">true</value>
+                    </InfoItem>
+                    <InfoItem name="User">
+                      <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.498+03:00">NONE</value>
+                    </InfoItem>
+                    <Object type="mv:Charger">
+                      <id>Charger</id>
+                      <InfoItem type="mv:Brand" name="Brand">
+                        <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.498+03:00">Exampler</value>
+                      </InfoItem>
+                      <InfoItem type="mv:Model" name="Model">
+                        <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.498+03:00">ExampleI</value>
+                      </InfoItem>
+                      <Object type="mv:Plug">
+                        <id>Plug</id>
+                        <InfoItem type="mv:PlugType" name="PlugType">
+                          <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.498+03:00">Schuko Plug</value>
+                        </InfoItem>
+                        <InfoItem type="mv:Power" name="Power">
+                          <value unixTime="1503489474" type="xs:double" dateTime="2017-08-23T14:57:54.498+03:00">2400.0</value>
+                        </InfoItem>
+                        <InfoItem type="mv:Voltage" name="Voltage">
+                          <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.499+03:00">Schuko Plug</value>
+                        </InfoItem>
+                        <InfoItem type="mv:CableAvailable" name="CableAvailable">
+                          <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.499+03:00">false</value>
+                        </InfoItem>
+                        <InfoItem type="mv:LockerAvailable" name="LockerAvailable">
+                          <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.499+03:00">true</value>
+                        </InfoItem>
+                        <InfoItem type="mv:ChargingSpeed" name="ChargingSpeed">
+                          <value unixTime="1503489474" dateTime="2017-08-23T14:57:54.499+03:00">mv:Standard</value>
+                        </InfoItem>
+                      </Object>
+                    </Object>
+                  </Object>
+                </Object>
+              </Object>
+            </Object>
+          </Object>
+        </Objects>
+      </msg>
+    </result>
+  </response>
+</omiEnvelope>
